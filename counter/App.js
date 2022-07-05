@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
 
@@ -9,8 +9,8 @@ export default function App() {
     <View style={styles.container}>
       <Text style={styles.fonts}>카운터 : {counter}</Text>
         <View style={styles.fixToText}>
-          <Button  title="-1" onPress={() => setCounter(counter - 1)} />
-          <Button  title="+1" onPress={() => setCounter(counter + 1)}/>
+          <Button  title='-1' onPress={() => setCounter(counter - 1)} />
+          <Button  title='+1' onPress={() => setCounter(counter + 1)}/>
         </View>
     </View>
   );
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   },
   fonts:{
     fontSize:40
-
   },
   fixToText:{
     flexDirection: 'row',
