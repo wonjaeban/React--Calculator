@@ -1,34 +1,37 @@
 import { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Button } from 'react-native-web';
-import {Ionicons} from '@expo/vector-icons';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      counter : 0
+      number : 0
     };
   }
 
   plusCount = () => {
     this.setState({
-      counter: this.state.counter + 1
+      number: this.state.number + 1
     })
   }
 
   minusCount = () => {
     this.setState({
-      counter: this.state.counter - 1
+      number: this.state.number - 1
+    })
+  }
+  makeNumber = ({number}) => {
+    this.setState({
+      number: number
     })
   }
     render() {
       return (
         <View style={styles.container}>
-          <View style={styles.upperPlace}><Text style={styles.calculatedNumber}>0</Text></View>
+          <View style={styles.upperPlace}><Text style={styles.calculatedNumber}>{this.state.number}</Text></View>
           <View style={styles.downPlace}>
           <View style={styles.buttons}>
-              <Text style={styles.calculatedNumber}>AC</Text>
+              <Text onPress={this.makeNumber} style={styles.calculatedNumber}>AC</Text>
               <Text style={styles.calculatedNumber}>+/-</Text>
               <Text style={styles.calculatedNumber}>%</Text>
               <Text style={styles.calculatedNumber}>/</Text>
@@ -36,14 +39,14 @@ class App extends Component {
             <View style={styles.buttons}>
               <Text style={styles.calculatedNumber}>7</Text>
               <Text style={styles.calculatedNumber}>8</Text>
-              <Text style={styles.calculatedNumber}>9</Text>
+              <Text onClick={this.makeNumber} style={styles.calculatedNumber}>9</Text>
               <Text style={[styles.calculatedNumber, styles.multiply]}>X</Text>
             </View>
             <View style={[styles.buttons, styles.buttons_3]}>
               <Text style={styles.calculatedNumber}>4</Text>
               <Text style={styles.calculatedNumber}>5</Text>
               <Text style={styles.calculatedNumber}>6</Text>
-              <Text style={[styles.calculatedNumber, styles.minus]}>-</Text>
+              <Text onClick={this.minusCount} style={[styles.calculatedNumber, styles.minus]}>-</Text>
             </View>
             <View style={styles.buttons}>
               <Text style={styles.calculatedNumber}>1</Text>
