@@ -20,9 +20,9 @@ class App extends Component {
       number: this.state.number - 1
     })
   }
-  makeNumber = ({number}) => {
+  makeNumber = (val) => {
     this.setState({
-      number: number
+      number: val
     })
   }
     render() {
@@ -31,7 +31,7 @@ class App extends Component {
           <View style={styles.upperPlace}><Text style={styles.calculatedNumber}>{this.state.number}</Text></View>
           <View style={styles.downPlace}>
           <View style={styles.buttons}>
-              <Text onPress={this.makeNumber} style={styles.calculatedNumber}>AC</Text>
+              <Text style={styles.calculatedNumber}>AC</Text>
               <Text style={styles.calculatedNumber}>+/-</Text>
               <Text style={styles.calculatedNumber}>%</Text>
               <Text style={styles.calculatedNumber}>/</Text>
@@ -39,7 +39,7 @@ class App extends Component {
             <View style={styles.buttons}>
               <Text style={styles.calculatedNumber}>7</Text>
               <Text style={styles.calculatedNumber}>8</Text>
-              <Text onClick={this.makeNumber} style={styles.calculatedNumber}>9</Text>
+              <Text onPress={() => this.makeNumber(9)} style={styles.calculatedNumber}>9</Text>
               <Text style={[styles.calculatedNumber, styles.multiply]}>X</Text>
             </View>
             <View style={[styles.buttons, styles.buttons_3]}>
