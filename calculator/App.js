@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Button, Text } from 'react-native';
 
 class App extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class App extends Component {
     let result = 0;
     let i = 0;
     let length = this.state.number.length;
+
     for (i = 0; i < length; i++) {
       if (
         this.state.number[i] === '/' ||
@@ -44,6 +45,7 @@ class App extends Component {
       } else {
         continuedNumber += this.state.number[i];
       }
+
       if (i === length - 1) {
         currentNumber = parseInt(continuedNumber);
         if (mathSign === '/') {
@@ -62,6 +64,7 @@ class App extends Component {
       number: result,
     });
   };
+
   makeNumbers = (val) => {
     let length = this.state.number.length;
     let index = length - 1;
@@ -71,7 +74,6 @@ class App extends Component {
         this.setState({
           number: '0.',
         });
-        countDot++;
       } else if (
         this.state.number[length - 1] === '.' ||
         this.state.number[length - 1] === '(' ||
@@ -113,17 +115,7 @@ class App extends Component {
           number: this.state.number + '0',
         });
       }
-    } else if (
-      val === '1' ||
-      val === '2' ||
-      val === '3' ||
-      val === '4' ||
-      val === '5' ||
-      val === '6' ||
-      val === '7' ||
-      val === '8' ||
-      val === '9'
-    ) {
+    } else if (!isNaN(parseInt(val))) {
       if (this.state.number === '0') {
         this.setState({
           number: val,
@@ -157,87 +149,6 @@ class App extends Component {
         });
       }
     }
-
-    // if (val === '+/-') {
-    //   if (this.state.number === '0') {
-    //     this.setState({
-    //       number: '(-',
-    //     });
-    //   } else {
-    //     let index = length - 1;
-    //     if (
-    //       this.state.number[index] === '%' ||
-    //       this.state.number[index] === '/' ||
-    //       this.state.number[index] === 'X' ||
-    //       this.state.number[index] === '-' ||
-    //       this.state.number[index] === '+'
-    //     ) {
-    //       this.setState({
-    //         number: this.state.number + '(-',
-    //       });
-    //     }
-    //     // else {
-    //     //   while(1) {
-    //     //     index--;
-    //     //     if(this.state.number[index] === '%' || this.state.number[index] === '/' || this.state.number[index] === 'X' || this.state.number[index] === '-' || this.state.number[index] === '+') {
-
-    //     //     }
-    //     //   }
-
-    //     // }
-    //   }
-    // } else if (
-    //   (val === '%' ||
-    //     val === '/' ||
-    //     val === 'X' ||
-    //     val === '-' ||
-    //     val === '+') &&
-    //   (this.state.number[length - 1] === '%' ||
-    //     this.state.number[length - 1] === '/' ||
-    //     this.state.number[length - 1] === 'X' ||
-    //     this.state.number[length - 1] === '-' ||
-    //     this.state.number[length - 1] === '+')
-    // ) {
-    //   let newSentence = this.state.number.substring(0, length - 1);
-    //   newSentence += val;
-    //   this.setState({
-    //     number: newSentence,
-    //   });
-    // } else if (
-    //   val === '.' &&
-    //   (this.state.number[length - 1] === 'X' ||
-    //     this.state.number[length - 1] === '/' ||
-    //     this.state.number[length - 1] === '%' ||
-    //     this.state.number[length - 1] === '-' ||
-    //     this.state.number[length - 1] === '+')
-    // ) {
-    //   return;
-    // } else if (val === '.' && this.state.number[length - 1] === '.') {
-    //   return;
-    // } else if (
-    //   (this.state.number === '0' && val === '.') ||
-    //   this.state.number != '0'
-    // ) {
-    //   if (countDot === 1 && val === '.') {
-    //     return;
-    //   } else if (countDot === 0 && val === '.') {
-    //     countDot++;
-    //   }
-    //   this.setState({
-    //     number: this.state.number + val,
-    //   });
-    // } else if (
-    //   this.state.number === '0' &&
-    //   val != '%' &&
-    //   val != '/' &&
-    //   val != 'X' &&
-    //   val != '-' &&
-    //   val != '+'
-    // ) {
-    //   this.setState({
-    //     number: val,
-    //   });
-    // }
   };
   allClear = () => {
     this.setState({
@@ -253,112 +164,131 @@ class App extends Component {
         </View>
         <View style={styles.downPlace}>
           <View style={styles.buttons}>
-            <Text onPress={this.allClear} style={styles.calculatedNumber}>
+            <Button title="AC" color="red" onPress={this.allClear}>
               AC
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="()"
               onPress={() => this.makeNumbers('()')}
               style={styles.calculatedNumber}>
               ()
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="%"
               onPress={() => this.makeNumbers('%')}
               style={styles.calculatedNumber}>
               %
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="/"
               onPress={() => this.makeNumbers('/')}
               style={styles.calculatedNumber}>
               /
-            </Text>
+            </Button>
           </View>
           <View style={styles.buttons}>
-            <Text
+            <Button
+              title="7"
               onPress={() => this.makeNumbers('7')}
               style={styles.calculatedNumber}>
               7
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="8"
               onPress={() => this.makeNumbers('8')}
               style={styles.calculatedNumber}>
               8
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="9"
               onPress={() => this.makeNumbers('9')}
               style={styles.calculatedNumber}>
               9
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="X"
               onPress={() => this.makeNumbers('X')}
               style={[styles.calculatedNumber, styles.multiply]}>
               X
-            </Text>
+            </Button>
           </View>
           <View style={[styles.buttons, styles.buttons_3]}>
-            <Text
+            <Button
+              title="4"
               onPress={() => this.makeNumbers('4')}
               style={styles.calculatedNumber}>
               4
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="5"
               onPress={() => this.makeNumbers('5')}
               style={styles.calculatedNumber}>
               5
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="6"
               onPress={() => this.makeNumbers('6')}
               style={styles.calculatedNumber}>
               6
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="-"
               onPress={() => this.makeNumbers('-')}
               style={[styles.calculatedNumber, styles.minus]}>
               -
-            </Text>
+            </Button>
           </View>
           <View style={styles.buttons}>
-            <Text
+            <Button
+              title="1"
               onPress={() => this.makeNumbers('1')}
               style={styles.calculatedNumber}>
               1
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="2"
               onPress={() => this.makeNumbers('2')}
               style={styles.calculatedNumber}>
               2
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="3"
               onPress={() => this.makeNumbers('3')}
               style={styles.calculatedNumber}>
               3
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="+"
               onPress={() => this.makeNumbers('+')}
               style={styles.calculatedNumber}>
               +
-            </Text>
+            </Button>
           </View>
           <View style={[styles.buttons, styles.buttons_5]}>
-            <Text
+            <Button
+              title="+/-"
               onPress={() => this.makeNumbers('+/-')}
               style={styles.calculatedNumber}>
               +/-
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="0"
               onPress={() => this.makeNumbers('0')}
               style={[styles.calculatedNumber, styles.zero]}>
               0
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="."
               onPress={() => this.makeNumbers('.')}
               style={styles.calculatedNumber}>
               .
-            </Text>
-            <Text
+            </Button>
+            <Button
+              title="="
               onPress={this.makeSolution}
               style={[styles.calculatedNumber, styles.equal]}>
               =
-            </Text>
+            </Button>
           </View>
         </View>
       </View>
