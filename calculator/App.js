@@ -5,7 +5,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      number : 0
+      number : '0'
     };
   }
 
@@ -21,9 +21,16 @@ class App extends Component {
     })
   }
   makeNumber = (val) => {
-    this.setState({
-      number: val
-    })
+    if(this.state.number == '0') {
+      this.setState({
+        number: val
+      })
+    }
+    else{
+      this.setState({
+        number: this.state.number + val
+      })
+    }
   }
     render() {
       return (
@@ -37,25 +44,25 @@ class App extends Component {
               <Text style={styles.calculatedNumber}>/</Text>
             </View>
             <View style={styles.buttons}>
-              <Text style={styles.calculatedNumber}>7</Text>
-              <Text style={styles.calculatedNumber}>8</Text>
-              <Text onPress={() => this.makeNumber(9)} style={styles.calculatedNumber}>9</Text>
+              <Text onPress={() => this.makeNumber('7')} style={styles.calculatedNumber}>7</Text>
+              <Text onPress={() => this.makeNumber('8')} style={styles.calculatedNumber}>8</Text>
+              <Text onPress={() => this.makeNumber('9')} style={styles.calculatedNumber}>9</Text>
               <Text style={[styles.calculatedNumber, styles.multiply]}>X</Text>
             </View>
             <View style={[styles.buttons, styles.buttons_3]}>
-              <Text style={styles.calculatedNumber}>4</Text>
-              <Text style={styles.calculatedNumber}>5</Text>
-              <Text style={styles.calculatedNumber}>6</Text>
+              <Text onPress={() => this.makeNumber('4')} style={styles.calculatedNumber}>4</Text>
+              <Text onPress={() => this.makeNumber('5')} style={styles.calculatedNumber}>5</Text>
+              <Text onPress={() => this.makeNumber('6')} style={styles.calculatedNumber}>6</Text>
               <Text onClick={this.minusCount} style={[styles.calculatedNumber, styles.minus]}>-</Text>
             </View>
             <View style={styles.buttons}>
-              <Text style={styles.calculatedNumber}>1</Text>
-              <Text style={styles.calculatedNumber}>2</Text>
-              <Text style={styles.calculatedNumber}>3</Text>
+              <Text onPress={() => this.makeNumber('1')} style={styles.calculatedNumber}>1</Text>
+              <Text onPress={() => this.makeNumber('2')} style={styles.calculatedNumber}>2</Text>
+              <Text onPress={() => this.makeNumber('3')} style={styles.calculatedNumber}>3</Text>
               <Text style={styles.calculatedNumber}>+</Text>
             </View>
             <View style={styles.buttons}>
-              <Text style={styles.calculatedNumber}>0</Text>
+              <Text onPress={() => this.makeNumber('0')} style={styles.calculatedNumber}>0</Text>
               <Text style={styles.calculatedNumber}>.</Text>
               <Text style={styles.calculatedNumber}>=</Text>
             </View>
