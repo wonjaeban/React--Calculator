@@ -68,7 +68,6 @@ class App extends Component {
   makeNumbers = (val) => {
     let length = this.state.number.length;
     let index = length - 1;
-    let countDot = 0;
     if (val === '.') {
       if (this.state.number === '0') {
         this.setState({
@@ -148,13 +147,16 @@ class App extends Component {
           number: this.state.number + val,
         });
       }
+    } else if (val === "AC") {
+      this.setState({
+        number: '0',
+      });
     }
   };
-  allClear = () => {
-    this.setState({
-      number: '0',
-    });
-  };
+
+  allButton = ({title}) => {
+    return(<Button title={title}  onPress={() => this.makeNumbers(title)} style={styles.button}></Button>);
+  }
 
   render() {
     return (
@@ -164,131 +166,35 @@ class App extends Component {
         </View>
         <View style={styles.downPlace}>
           <View style={styles.buttons}>
-            <Button title="AC" color="red" onPress={this.allClear}>
-              AC
-            </Button>
-            <Button
-              title="()"
-              onPress={() => this.makeNumbers('()')}
-              style={styles.calculatedNumber}>
-              ()
-            </Button>
-            <Button
-              title="%"
-              onPress={() => this.makeNumbers('%')}
-              style={styles.calculatedNumber}>
-              %
-            </Button>
-            <Button
-              title="/"
-              onPress={() => this.makeNumbers('/')}
-              style={styles.calculatedNumber}>
-              /
-            </Button>
+            <this.allButton title="AC" ></this.allButton>
+            <this.allButton title="()" ></this.allButton>
+            
+            <this.allButton title="%" ></this.allButton>
+            <this.allButton title="/" ></this.allButton>
           </View>
           <View style={styles.buttons}>
-            <Button
-              title="7"
-              onPress={() => this.makeNumbers('7')}
-              style={styles.calculatedNumber}>
-              7
-            </Button>
-            <Button
-              title="8"
-              onPress={() => this.makeNumbers('8')}
-              style={styles.calculatedNumber}>
-              8
-            </Button>
-            <Button
-              title="9"
-              onPress={() => this.makeNumbers('9')}
-              style={styles.calculatedNumber}>
-              9
-            </Button>
-            <Button
-              title="X"
-              onPress={() => this.makeNumbers('X')}
-              style={[styles.calculatedNumber, styles.multiply]}>
-              X
-            </Button>
+            <this.allButton title="7" ></this.allButton>
+            <this.allButton title="8" ></this.allButton>
+            <this.allButton title="9" ></this.allButton>
+            <this.allButton title="X" ></this.allButton>
           </View>
-          <View style={[styles.buttons, styles.buttons_3]}>
-            <Button
-              title="4"
-              onPress={() => this.makeNumbers('4')}
-              style={styles.calculatedNumber}>
-              4
-            </Button>
-            <Button
-              title="5"
-              onPress={() => this.makeNumbers('5')}
-              style={styles.calculatedNumber}>
-              5
-            </Button>
-            <Button
-              title="6"
-              onPress={() => this.makeNumbers('6')}
-              style={styles.calculatedNumber}>
-              6
-            </Button>
-            <Button
-              title="-"
-              onPress={() => this.makeNumbers('-')}
-              style={[styles.calculatedNumber, styles.minus]}>
-              -
-            </Button>
+          <View style={[styles.buttons]}>
+            <this.allButton title="4" ></this.allButton>
+            <this.allButton title="5" ></this.allButton>
+            <this.allButton title="6" ></this.allButton>
+            <this.allButton title="-" ></this.allButton>
           </View>
           <View style={styles.buttons}>
-            <Button
-              title="1"
-              onPress={() => this.makeNumbers('1')}
-              style={styles.calculatedNumber}>
-              1
-            </Button>
-            <Button
-              title="2"
-              onPress={() => this.makeNumbers('2')}
-              style={styles.calculatedNumber}>
-              2
-            </Button>
-            <Button
-              title="3"
-              onPress={() => this.makeNumbers('3')}
-              style={styles.calculatedNumber}>
-              3
-            </Button>
-            <Button
-              title="+"
-              onPress={() => this.makeNumbers('+')}
-              style={styles.calculatedNumber}>
-              +
-            </Button>
+            <this.allButton title="1" ></this.allButton>
+            <this.allButton title="2" ></this.allButton>
+            <this.allButton title="3" ></this.allButton>
+            <this.allButton title="+" ></this.allButton>
           </View>
-          <View style={[styles.buttons, styles.buttons_5]}>
-            <Button
-              title="+/-"
-              onPress={() => this.makeNumbers('+/-')}
-              style={styles.calculatedNumber}>
-              +/-
-            </Button>
-            <Button
-              title="0"
-              onPress={() => this.makeNumbers('0')}
-              style={[styles.calculatedNumber, styles.zero]}>
-              0
-            </Button>
-            <Button
-              title="."
-              onPress={() => this.makeNumbers('.')}
-              style={styles.calculatedNumber}>
-              .
-            </Button>
-            <Button
-              title="="
-              onPress={this.makeSolution}
-              style={[styles.calculatedNumber, styles.equal]}>
-              =
-            </Button>
+          <View style={[styles.buttons]}>
+            <this.allButton title="+/-" ></this.allButton>
+            <this.allButton title="0" ></this.allButton>
+            <this.allButton title="." ></this.allButton>
+            <this.allButton title="=" ></this.allButton>
           </View>
         </View>
       </View>
@@ -311,6 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'yellow',
   },
   buttons: {
+    flex: 0.1,
     flexDirection: 'row',
     marginTop: 30,
     justifyContent: 'space-between',
@@ -320,25 +227,9 @@ const styles = StyleSheet.create({
   calculatedNumber: {
     fontSize: 50,
   },
-  multiply: {
-    fontSize: 40,
-  },
-  minus: {
-    fontSize: 30,
-  },
-  numbers: {
-    fontSize: 50,
-  },
-  buttons_3: {
-    marginRight: 40,
-  },
-  zero: {
-    marginRight: 50,
-  },
-  equal: {
-    marginRight: 10,
-    marginLeft: 30,
-  },
+  button: {
+    color: "red"
+  }
 });
 
 export default App;
