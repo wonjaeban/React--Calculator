@@ -146,7 +146,7 @@ class App extends Component {
     }
   };
 
-  allButton = ({ title }) => {
+  AllButton = ({ title }) => {
     const mathSigns = ['()', '%', '/', 'X', '-', '+'];
     if (title === '=') {
       return (
@@ -194,35 +194,35 @@ class App extends Component {
         </View>
         <View style={styles.downPlace}>
           <View style={styles.buttons}>
-            <this.allButton title="AC"></this.allButton>
-            <this.allButton title="()"></this.allButton>
+            <this.AllButton title="AC"></this.AllButton>
+            <this.AllButton title="()"></this.AllButton>
 
-            <this.allButton title="%"></this.allButton>
-            <this.allButton title="/"></this.allButton>
+            <this.AllButton title="%"></this.AllButton>
+            <this.AllButton title="/"></this.AllButton>
           </View>
           <View style={styles.buttons2}>
-            <this.allButton title="7"></this.allButton>
-            <this.allButton title="8"></this.allButton>
-            <this.allButton title="9"></this.allButton>
-            <this.allButton title="X"></this.allButton>
+            <this.AllButton title="7"></this.AllButton>
+            <this.AllButton title="8"></this.AllButton>
+            <this.AllButton title="9"></this.AllButton>
+            <this.AllButton title="X"></this.AllButton>
           </View>
           <View style={styles.buttons3}>
-            <this.allButton title="4"></this.allButton>
-            <this.allButton title="5"></this.allButton>
-            <this.allButton title="6"></this.allButton>
-            <this.allButton title="-"></this.allButton>
+            <this.AllButton title="4"></this.AllButton>
+            <this.AllButton title="5"></this.AllButton>
+            <this.AllButton title="6"></this.AllButton>
+            <this.AllButton title="-"></this.AllButton>
           </View>
           <View style={styles.buttons4}>
-            <this.allButton title="1"></this.allButton>
-            <this.allButton title="2"></this.allButton>
-            <this.allButton title="3"></this.allButton>
-            <this.allButton title="+"></this.allButton>
+            <this.AllButton title="1"></this.AllButton>
+            <this.AllButton title="2"></this.AllButton>
+            <this.AllButton title="3"></this.AllButton>
+            <this.AllButton title="+"></this.AllButton>
           </View>
           <View style={styles.buttons5}>
-            <this.allButton title="+/-"></this.allButton>
-            <this.allButton title="0"></this.allButton>
-            <this.allButton title="."></this.allButton>
-            <this.allButton title="="></this.allButton>
+            <this.AllButton title="+/-"></this.AllButton>
+            <this.AllButton title="0"></this.AllButton>
+            <this.AllButton title="."></this.AllButton>
+            <this.AllButton title="="></this.AllButton>
           </View>
         </View>
       </View>
