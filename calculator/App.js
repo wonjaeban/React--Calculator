@@ -34,29 +34,33 @@ class App extends Component {
     const basicMathSigns = ['/', 'X', '-', '+'];
 
     for (i = 0; i < length; i++) {
-      if (basicMathSigns.includes(nowNumber[i])) {
-        if (previousNumber) {
-          currentNumber = parseInt(continuedNumber);
-          continuedNumber = '';
-          previousNumber = this.makeCalculate(
-            previousNumber,
-            mathSign,
-            currentNumber
-          );
-        } else {
-          previousNumber = parseInt(continuedNumber);
-          continuedNumber = '';
-          mathSign = nowNumber[i];
-        }
-      } else {
+      //숫자라면
+      if (!basicMathSigns.includes(nowNumber[i])) {
         continuedNumber += nowNumber[i];
+        //숫자인데 마지막 숫자라면
+        if (i === length - 1) {
+          currentNumber = parseInt(continuedNumber);
+        }
+        continue;
       }
-
-      if (i === length - 1) {
+      //숫자 아니고 이전 숫자가 있다면
+      if (previousNumber) {
         currentNumber = parseInt(continuedNumber);
-        result = this.makeCalculate(previousNumber, mathSign, currentNumber);
+        continuedNumber = '';
+        previousNumber = this.makeCalculate(
+          previousNumber,
+          mathSign,
+          currentNumber
+        );
+        continue;
       }
+      //숫자 아니고 이전 숫자 없으면
+      previousNumber = parseInt(continuedNumber);
+      continuedNumber = '';
+      mathSign = nowNumber[i];
     }
+
+    result = this.makeCalculate(previousNumber, mathSign, currentNumber);
     this.setState({
       number: result.toString(),
     });
@@ -86,6 +90,7 @@ class App extends Component {
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
     const basicMathSigns = ['/', 'X', '-', '+'];
     let nowNumber = this.state.number;
+
     if (val === '.') {
       if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
         return;
@@ -93,28 +98,26 @@ class App extends Component {
         this.setState({
           number: '0.',
         });
-      } else {
-        this.checkPastDots();
+        return;
       }
+      this.checkPastDots();
     } else if (val === '0') {
       if (nowNumber === '0') {
         return;
-      } else {
-        this.setState({
-          number: nowNumber + '0',
-        });
       }
+      this.setState({
+        number: nowNumber + '0',
+      });
     } else if (!isNaN(parseInt(val))) {
       if (nowNumber === '0') {
         this.setState({
           number: val,
         });
         return;
-      } else {
-        this.setState({
-          number: nowNumber + val,
-        });
       }
+      this.setState({
+        number: nowNumber + val,
+      });
     } else if (basicMathSigns.includes(val)) {
       if (nowNumber[length - 1] === '(' || nowNumber[length - 1] === '.') {
         return;
@@ -124,11 +127,11 @@ class App extends Component {
         this.setState({
           number: newSentence,
         });
-      } else {
-        this.setState({
-          number: nowNumber + val,
-        });
+        return;
       }
+      this.setState({
+        number: nowNumber + val,
+      });
     } else if (val === 'AC') {
       this.setState({
         number: '0',
@@ -173,15 +176,14 @@ class App extends Component {
           <Text style={styles.textButtonAC}>{title}</Text>
         </TouchableOpacity>
       );
-    } else {
-      return (
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() => this.makeNumbers(title)}>
-          <Text style={styles.textButtons}>{title}</Text>
-        </TouchableOpacity>
-      );
     }
+    return (
+      <TouchableOpacity
+        style={styles.roundButton}
+        onPress={() => this.makeNumbers(title)}>
+        <Text style={styles.textButtons}>{title}</Text>
+      </TouchableOpacity>
+    );
   };
 
   render() {
