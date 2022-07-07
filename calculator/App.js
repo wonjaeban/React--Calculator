@@ -23,44 +23,53 @@ class App extends Component {
   };
 
   makeSolution = () => {
-    let previousNumber = 0;
-    let continuedNumber = '';
-    let currentNumber = 0;
-    let mathSign = '';
-    let result = 0;
-    let i = 0;
-    let length = this.state.number.length;
-    let nowNumber = this.state.number;
     const basicMathSigns = ['/', 'X', '-', '+'];
+    const numberAndSigns = this.state.number;
+    if (basicMathSigns.includes(numberAndSigns[this.state.number.length - 1])) {
+      alert('완성되지 않은 수식입니다!');
+      return;
+    }
+    const stringNumbers = numberAndSigns.split(/[+, \-, X, /]/);
+    const numbers = stringNumbers.map((each) => Number(each));
+    let signs = [];
+    let newSigns = [];
+    let i = 0;
+    let decreaseIndex = 0;
+    let result = 0;
 
-    for (i = 0; i < length; i++) {
-      //숫자라면
-      if (!basicMathSigns.includes(nowNumber[i])) {
-        continuedNumber += nowNumber[i];
-        //숫자인데 마지막 숫자라면
-        if (i === length - 1) {
-          currentNumber = parseInt(continuedNumber);
-        }
-        continue;
+    for (i = 0; i < numberAndSigns.length; i++) {
+      if (basicMathSigns.includes(numberAndSigns[i])) {
+        signs.push(numberAndSigns[i]);
       }
-      //숫자 아니고 이전 숫자가 있다면
-      if (previousNumber) {
-        currentNumber = parseInt(continuedNumber);
-        continuedNumber = '';
-        previousNumber = this.makeCalculate(
-          previousNumber,
-          mathSign,
-          currentNumber
-        );
-        continue;
-      }
-      //숫자 아니고 이전 숫자 없으면
-      previousNumber = parseInt(continuedNumber);
-      continuedNumber = '';
-      mathSign = nowNumber[i];
     }
 
-    result = this.makeCalculate(previousNumber, mathSign, currentNumber);
+    for (i = 0; i < signs.length; i++) {
+      if (signs[i] === '/') {
+        let intermediateResult =
+          numbers[i - decreaseIndex] / numbers[i - decreaseIndex + 1];
+        numbers.splice(i - decreaseIndex, 2);
+        numbers.splice(i - decreaseIndex, 0, intermediateResult);
+        decreaseIndex++;
+        continue;
+      } else if (signs[i] === 'X') {
+        let intermediateResult =
+          numbers[i - decreaseIndex] * numbers[i - decreaseIndex + 1];
+        numbers.splice(i - decreaseIndex, 2);
+        numbers.splice(i - decreaseIndex, 0, intermediateResult);
+        decreaseIndex++;
+        continue;
+      }
+      newSigns.push(signs[i]);
+    }
+
+    result = numbers[0];
+    for (i = 0; i < newSigns.length; i++) {
+      if (newSigns[i] === '-') {
+        result = result - numbers[i + 1];
+      } else if (newSigns[i] === '+') {
+        result = result + numbers[i + 1];
+      }
+    }
     this.setState({
       number: result.toString(),
     });
