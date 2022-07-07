@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { StyleSheet, View, Button, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 class App extends Component {
   constructor(props) {
@@ -9,6 +9,19 @@ class App extends Component {
     };
   }
 
+  makeCalculate = (previousNumber, mathSign, currentNumber) => {
+    if (mathSign === '/') {
+      previousNumber /= currentNumber;
+    } else if (mathSign === 'X') {
+      previousNumber *= currentNumber;
+    } else if (mathSign === '-') {
+      previousNumber -= currentNumber;
+    } else if (mathSign === '+') {
+      previousNumber += currentNumber;
+    }
+    return previousNumber;
+  };
+
   makeSolution = () => {
     let previousNumber = 0;
     let continuedNumber = '';
@@ -17,47 +30,31 @@ class App extends Component {
     let result = 0;
     let i = 0;
     let length = this.state.number.length;
+    let nowNumber = this.state.number;
+    const basicMathSigns = ['/', 'X', '-', '+'];
 
     for (i = 0; i < length; i++) {
-      if (
-        this.state.number[i] === '/' ||
-        this.state.number[i] === 'X' ||
-        this.state.number[i] === '-' ||
-        this.state.number[i] === '+'
-      ) {
+      if (basicMathSigns.includes(nowNumber[i])) {
         if (previousNumber) {
           currentNumber = parseInt(continuedNumber);
           continuedNumber = '';
-          if (mathSign === '/') {
-            previousNumber /= currentNumber;
-          } else if (mathSign === 'X') {
-            previousNumber *= currentNumber;
-          } else if (mathSign === '-') {
-            previousNumber -= currentNumber;
-          } else if (mathSign === '+') {
-            previousNumber += currentNumber;
-          }
+          previousNumber = this.makeCalculate(
+            previousNumber,
+            mathSign,
+            currentNumber
+          );
         } else {
           previousNumber = parseInt(continuedNumber);
           continuedNumber = '';
-          mathSign = this.state.number[i];
+          mathSign = nowNumber[i];
         }
       } else {
-        continuedNumber += this.state.number[i];
+        continuedNumber += nowNumber[i];
       }
 
       if (i === length - 1) {
         currentNumber = parseInt(continuedNumber);
-        if (mathSign === '/') {
-          previousNumber /= currentNumber;
-        } else if (mathSign === 'X') {
-          previousNumber *= currentNumber;
-        } else if (mathSign === '-') {
-          previousNumber -= currentNumber;
-        } else if (mathSign === '+') {
-          previousNumber += currentNumber;
-        }
-        result = previousNumber;
+        result = this.makeCalculate(previousNumber, mathSign, currentNumber);
       }
     }
     this.setState({
@@ -65,86 +62,71 @@ class App extends Component {
     });
   };
 
+  checkPastDots = () => {
+    let length = this.state.number.length;
+    let nowNumber = this.state.number;
+    let index = length - 1;
+    const pastMathSigns = [')', '%', '/', 'X', '-', '+'];
+    while (1) {
+      // 이전에 .이 한번도 없었다면
+      if (index === -1 || pastMathSigns.includes(nowNumber[index])) {
+        this.setState({
+          number: nowNumber + '.',
+        });
+        return;
+      } else if (nowNumber[index] === '.') {
+        return;
+      }
+      index--;
+    }
+  };
+
   makeNumbers = (val) => {
     let length = this.state.number.length;
-    let index = length - 1;
+    const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
+    const basicMathSigns = ['/', 'X', '-', '+'];
+    let nowNumber = this.state.number;
     if (val === '.') {
-      if (this.state.number === '0') {
+      if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
+        return;
+      } else if (nowNumber === '0') {
         this.setState({
           number: '0.',
         });
-      } else if (
-        this.state.number[length - 1] === '.' ||
-        this.state.number[length - 1] === '(' ||
-        this.state.number[length - 1] === ')' ||
-        this.state.number[length - 1] === '%' ||
-        this.state.number[length - 1] === '/' ||
-        this.state.number[length - 1] === 'X' ||
-        this.state.number[length - 1] === '-' ||
-        this.state.number[length - 1] === '+'
-      ) {
-        return;
       } else {
-        while (1) {
-          // 이전에 .이 한번도 없었다면
-          if (
-            index === -1 ||
-            this.state.number[index] === ')' ||
-            this.state.number[index] === '%' ||
-            this.state.number[index] === '/' ||
-            this.state.number[index] === 'X' ||
-            this.state.number[index] === '-' ||
-            this.state.number[index] === '+'
-          ) {
-            this.setState({
-              number: this.state.number + '.',
-            });
-            return;
-          } else if (this.state.number[index] === '.') {
-            return;
-          }
-          index--;
-        }
+        this.checkPastDots();
       }
     } else if (val === '0') {
-      if (this.state.number === '0') {
+      if (nowNumber === '0') {
         return;
       } else {
         this.setState({
-          number: this.state.number + '0',
+          number: nowNumber + '0',
         });
       }
     } else if (!isNaN(parseInt(val))) {
-      if (this.state.number === '0') {
+      if (nowNumber === '0') {
         this.setState({
           number: val,
         });
         return;
       } else {
         this.setState({
-          number: this.state.number + val,
+          number: nowNumber + val,
         });
       }
-    } else if (val === '/' || val === 'X' || val === '-' || val === '+') {
-      if (
-        this.state.number[length - 1] === '(' ||
-        this.state.number[length - 1] === '.'
-      ) {
+    } else if (basicMathSigns.includes(val)) {
+      if (nowNumber[length - 1] === '(' || nowNumber[length - 1] === '.') {
         return;
-      } else if (
-        this.state.number[length - 1] === '/' ||
-        this.state.number[length - 1] === 'X' ||
-        this.state.number[length - 1] === '-' ||
-        this.state.number[length - 1] === '+'
-      ) {
-        let newSentence = this.state.number.substring(0, length - 1);
+      } else if (basicMathSigns.includes(nowNumber[length - 1])) {
+        let newSentence = nowNumber.substring(0, length - 1);
         newSentence += val;
         this.setState({
           number: newSentence,
         });
       } else {
         this.setState({
-          number: this.state.number + val,
+          number: nowNumber + val,
         });
       }
     } else if (val === 'AC') {
@@ -155,6 +137,7 @@ class App extends Component {
   };
 
   allButton = ({ title }) => {
+    const mathSigns = ['()', '%', '/', 'X', '-', '+'];
     if (title === '=') {
       return (
         <TouchableOpacity
@@ -163,14 +146,7 @@ class App extends Component {
           <Text style={styles.textButtons}>{title}</Text>
         </TouchableOpacity>
       );
-    } else if (
-      title === '()' ||
-      title === '%' ||
-      title === '/' ||
-      title === 'X' ||
-      title === '-' ||
-      title === '+'
-    ) {
+    } else if (mathSigns.includes(title)) {
       return (
         <TouchableOpacity
           style={styles.roundButton}
