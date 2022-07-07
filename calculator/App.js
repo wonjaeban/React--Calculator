@@ -58,7 +58,7 @@ class App extends Component {
       }
     }
     this.setState({
-      number: result,
+      number: result.toString(),
     });
   };
 
@@ -133,6 +133,13 @@ class App extends Component {
       this.setState({
         number: '0',
       });
+    } else if (val === '%') {
+      if (!isNaN(parseInt(nowNumber[length - 1]))) {
+        this.setState({
+          number: nowNumber + val,
+        });
+      } else if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
+      }
     }
   };
 
