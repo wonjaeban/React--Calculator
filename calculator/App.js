@@ -219,8 +219,7 @@ class App extends Component {
       return (
         <TouchableOpacity
           style={styles.roundButtonEqual}
-          onPress={this.makeSolution}
-        >
+          onPress={this.makeSolution}>
           <Text style={styles.textButtons}>{title}</Text>
         </TouchableOpacity>
       );
@@ -230,8 +229,7 @@ class App extends Component {
           style={styles.roundButton}
           onPress={() => {
             this.makeNumbers(title);
-          }}
-        >
+          }}>
           <Text style={styles.textButtonSign}>{title}</Text>
         </TouchableOpacity>
       );
@@ -241,8 +239,7 @@ class App extends Component {
           style={styles.roundButton}
           onPress={() => {
             this.makeNumbers(title);
-          }}
-        >
+          }}>
           <Text style={styles.textButtonAC}>{title}</Text>
         </TouchableOpacity>
       );
@@ -251,8 +248,7 @@ class App extends Component {
     return (
       <TouchableOpacity
         style={styles.roundButton}
-        onPress={() => this.makeNumbers(title)}
-      >
+        onPress={() => this.makeNumbers(title)}>
         <Text style={styles.textButtons}>{title}</Text>
       </TouchableOpacity>
     );
