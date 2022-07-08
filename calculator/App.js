@@ -30,6 +30,12 @@ class App extends Component {
       return;
     }
     const stringNumbers = numberAndSigns.split(/[+, \-, X, /]/);
+    for (let i = 0; i < stringNumbers.length; i++) {
+      if (stringNumbers[i].includes('%')) {
+        let percentNumber = stringNumbers[i].slice(0, -1);
+        stringNumbers.splice(i, 1, Number(percentNumber) / 100);
+      }
+    }
     const numbers = stringNumbers.map((each) => Number(each));
     let signs = [];
     let newSigns = [];
@@ -114,7 +120,6 @@ class App extends Component {
     } else if (val === '0') {
       let i = length - 1;
       let isActualNumber = false;
-      let isNaturalNumber = false;
       //기호뒤에는 0 가능
       if (basicMathSigns.includes(nowNumber[length - 1])) {
         this.setState({
@@ -195,7 +200,10 @@ class App extends Component {
         this.setState({
           number: nowNumber + val,
         });
+        return;
       } else if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
+        alert('완성되지 수식입니다!');
+        return;
       }
     }
   };
