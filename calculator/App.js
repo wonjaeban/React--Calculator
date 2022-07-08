@@ -134,7 +134,10 @@ class App extends Component {
         i--;
       }
       // 기호를 만나거나 인덱스를 벗어나기 전까지 가장 첫번째 요소가 1~9 사이라면 2000000이 가능해야한다.
-      if (naturalNumbers.includes(nowNumber[i])) {
+      if (
+        naturalNumbers.includes(nowNumber[i]) ||
+        naturalNumbers.includes(nowNumber[i + 1])
+      ) {
         this.setState({
           number: nowNumber + '0',
         });

@@ -17,7 +17,14 @@
 //16. 2000200 가능한가? O
 //17. 21+023 안되는가? O
 // 18.
-import { App } from './App.js';
-test('0.123', () => {
-  expect(App.makeNumbers('.')).toBe('0');
-});
+
+// import React from 'react';
+// import renderer from 'react-test-renderer';
+// import App from './App';
+
+// describe('<App />', () => {
+//   it('has 1 child', () => {
+//     App.makeNumbers('1');
+//     expect(1).toBe(1);
+//   });
+// });
