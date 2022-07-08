@@ -1,5 +1,49 @@
-import { Component } from 'react';
+import { Component, PureComponent } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+
+class AllButton extends Component {
+  render() {
+    console.log('유재석');
+    const mathSigns = ['()', '%', '/', 'X', '-', '+'];
+    if (title === '=') {
+      return (
+        <TouchableOpacity
+          style={styles.roundButtonEqual}
+          onPress={App.makeSolution}>
+          <Text style={styles.textButtons}>{title}</Text>
+        </TouchableOpacity>
+      );
+    } else if (mathSigns.includes(title)) {
+      return (
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={() => {
+            App.makeNumbers(title);
+          }}>
+          <Text style={styles.textButtonSign}>{title}</Text>
+        </TouchableOpacity>
+      );
+    } else if (title === 'AC') {
+      return (
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={() => {
+            App.makeNumbers(title);
+          }}>
+          <Text style={styles.textButtonAC}>{title}</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return (
+      <TouchableOpacity
+        style={styles.roundButton}
+        onPress={() => App.makeNumbers(title)}>
+        <Text style={styles.textButtons}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+}
 
 class App extends Component {
   constructor(props) {
@@ -9,27 +53,22 @@ class App extends Component {
     };
   }
 
-  makeCalculate = (previousNumber, mathSign, currentNumber) => {
-    if (mathSign === '/') {
-      previousNumber /= currentNumber;
-    } else if (mathSign === 'X') {
-      previousNumber *= currentNumber;
-    } else if (mathSign === '-') {
-      previousNumber -= currentNumber;
-    } else if (mathSign === '+') {
-      previousNumber += currentNumber;
-    }
-    return previousNumber;
-  };
-
+  //최종적으로 화면에 있는 문자 및 숫자들 출력하는 함수
   makeSolution = () => {
     const basicMathSigns = ['/', 'X', '-', '+'];
     const numberAndSigns = this.state.number;
+    //현재 화면에 나온
     if (basicMathSigns.includes(numberAndSigns[this.state.number.length - 1])) {
       alert('완성되지 않은 수식입니다!');
       return;
     }
     const stringNumbers = numberAndSigns.split(/[+, \-, X, /]/);
+    for (let i = 0; i < stringNumbers.length; i++) {
+      if (stringNumbers[i].includes('%')) {
+        let percentNumber = stringNumbers[i].slice(0, -1);
+        stringNumbers.splice(i, 1, Number(percentNumber) / 100);
+      }
+    }
     const numbers = stringNumbers.map((each) => Number(each));
     let signs = [];
     let newSigns = [];
@@ -98,6 +137,7 @@ class App extends Component {
     let length = this.state.number.length;
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
     const basicMathSigns = ['/', 'X', '-', '+'];
+    const naturalNumbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let nowNumber = this.state.number;
 
     if (val === '.') {
@@ -111,7 +151,38 @@ class App extends Component {
       }
       this.checkPastDots();
     } else if (val === '0') {
-      if (nowNumber === '0') {
+      let i = length - 1;
+      let isActualNumber = false;
+      //기호뒤에는 0 가능
+      if (basicMathSigns.includes(nowNumber[length - 1])) {
+        this.setState({
+          number: nowNumber + '0',
+        });
+        return;
+      }
+      while (1) {
+        //기호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
+        if (i === 0 || basicMathSigns.includes(nowNumber[i])) {
+          break;
+        } //.을 만나면 소수다.
+        else if (nowNumber[i] === '.') {
+          isActualNumber = true;
+          break;
+        }
+        i--;
+      }
+      // 기호를 만나거나 인덱스를 벗어나기 전까지 가장 첫번째 요소가 1~9 사이라면 2000000이 가능해야한다.
+      if (
+        naturalNumbers.includes(nowNumber[i]) ||
+        naturalNumbers.includes(nowNumber[i + 1])
+      ) {
+        this.setState({
+          number: nowNumber + '0',
+        });
+        return;
+      }
+      //실수아니면 0000불가능.
+      if (!isActualNumber) {
         return;
       }
       this.setState({
@@ -121,6 +192,23 @@ class App extends Component {
       if (nowNumber === '0') {
         this.setState({
           number: val,
+        });
+        return;
+      } else if (
+        nowNumber[length - 1] === '0' &&
+        basicMathSigns.includes(nowNumber[length - 2])
+      ) {
+        let newNumber = '';
+        for (let i = 0; i < length - 1; i++) {
+          newNumber += nowNumber[i];
+        }
+        this.setState({
+          number: newNumber + val,
+        });
+        return;
+      } else if (nowNumber[length - 1] === '%') {
+        this.setState({
+          number: nowNumber + 'X' + val,
         });
         return;
       }
@@ -150,49 +238,12 @@ class App extends Component {
         this.setState({
           number: nowNumber + val,
         });
+        return;
       } else if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
+        alert('완성되지 수식입니다!');
+        return;
       }
     }
-  };
-
-  AllButton = ({ title }) => {
-    const mathSigns = ['()', '%', '/', 'X', '-', '+'];
-    if (title === '=') {
-      return (
-        <TouchableOpacity
-          style={styles.roundButtonEqual}
-          onPress={this.makeSolution}>
-          <Text style={styles.textButtons}>{title}</Text>
-        </TouchableOpacity>
-      );
-    } else if (mathSigns.includes(title)) {
-      return (
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() => {
-            this.makeNumbers(title);
-          }}>
-          <Text style={styles.textButtonSign}>{title}</Text>
-        </TouchableOpacity>
-      );
-    } else if (title === 'AC') {
-      return (
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() => {
-            this.makeNumbers(title);
-          }}>
-          <Text style={styles.textButtonAC}>{title}</Text>
-        </TouchableOpacity>
-      );
-    }
-    return (
-      <TouchableOpacity
-        style={styles.roundButton}
-        onPress={() => this.makeNumbers(title)}>
-        <Text style={styles.textButtons}>{title}</Text>
-      </TouchableOpacity>
-    );
   };
 
   render() {
@@ -203,35 +254,35 @@ class App extends Component {
         </View>
         <View style={styles.downPlace}>
           <View style={styles.buttons}>
-            <this.AllButton title="AC"></this.AllButton>
-            <this.AllButton title="()"></this.AllButton>
+            <AllButton title="AC"></AllButton>
+            <AllButton title="()"></AllButton>
 
-            <this.AllButton title="%"></this.AllButton>
-            <this.AllButton title="/"></this.AllButton>
+            <AllButton title="%"></AllButton>
+            <AllButton title="/"></AllButton>
           </View>
           <View style={styles.buttons2}>
-            <this.AllButton title="7"></this.AllButton>
-            <this.AllButton title="8"></this.AllButton>
-            <this.AllButton title="9"></this.AllButton>
-            <this.AllButton title="X"></this.AllButton>
+            <AllButton title="7"></AllButton>
+            <AllButton title="8"></AllButton>
+            <AllButton title="9"></AllButton>
+            <AllButton title="X"></AllButton>
           </View>
           <View style={styles.buttons3}>
-            <this.AllButton title="4"></this.AllButton>
-            <this.AllButton title="5"></this.AllButton>
-            <this.AllButton title="6"></this.AllButton>
-            <this.AllButton title="-"></this.AllButton>
+            <AllButton title="4"></AllButton>
+            <AllButton title="5"></AllButton>
+            <AllButton title="6"></AllButton>
+            <AllButton title="-"></AllButton>
           </View>
           <View style={styles.buttons4}>
-            <this.AllButton title="1"></this.AllButton>
-            <this.AllButton title="2"></this.AllButton>
-            <this.AllButton title="3"></this.AllButton>
-            <this.AllButton title="+"></this.AllButton>
+            <AllButton title="1"></AllButton>
+            <AllButton title="2"></AllButton>
+            <AllButton title="3"></AllButton>
+            <AllButton title="+"></AllButton>
           </View>
           <View style={styles.buttons5}>
-            <this.AllButton title="+/-"></this.AllButton>
-            <this.AllButton title="0"></this.AllButton>
-            <this.AllButton title="."></this.AllButton>
-            <this.AllButton title="="></this.AllButton>
+            <AllButton title="+/-"></AllButton>
+            <AllButton title="0"></AllButton>
+            <AllButton title="."></AllButton>
+            <AllButton title="="></AllButton>
           </View>
         </View>
       </View>
