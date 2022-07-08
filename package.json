@@ -1,9 +1,0 @@
-{
-  "devDependencies": {
-    "@testing-library/jest-native": "^4.0.5",
-    "@testing-library/react-native": "^10.1.1",
-    "@types/jest": "^28.1.4",
-    "immer": "^9.0.15",
-    "react-test-renderer": "^18.2.0"
-  }
-}
