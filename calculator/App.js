@@ -173,6 +173,11 @@ class App extends Component {
           number: newNumber + val,
         });
         return;
+      } else if (nowNumber[length - 1] === '%') {
+        this.setState({
+          number: nowNumber + 'X' + val,
+        });
+        return;
       }
       this.setState({
         number: nowNumber + val,
