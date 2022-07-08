@@ -98,6 +98,7 @@ class App extends Component {
     let length = this.state.number.length;
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
     const basicMathSigns = ['/', 'X', '-', '+'];
+    const naturalNumbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let nowNumber = this.state.number;
 
     if (val === '.') {
@@ -111,7 +112,36 @@ class App extends Component {
       }
       this.checkPastDots();
     } else if (val === '0') {
-      if (nowNumber === '0') {
+      let i = length - 1;
+      let isActualNumber = false;
+      let isNaturalNumber = false;
+      //기호뒤에는 0 가능
+      if (basicMathSigns.includes(nowNumber[length - 1])) {
+        this.setState({
+          number: nowNumber + '0',
+        });
+        return;
+      }
+      while (1) {
+        //기호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
+        if (i === 0 || basicMathSigns.includes(nowNumber[i])) {
+          break;
+        } //.을 만나면 소수다.
+        else if (nowNumber[i] === '.') {
+          isActualNumber = true;
+          break;
+        }
+        i--;
+      }
+      // 기호를 만나거나 인덱스를 벗어나기 전까지 가장 첫번째 요소가 1~9 사이라면 2000000이 가능해야한다.
+      if (naturalNumbers.includes(nowNumber[i])) {
+        this.setState({
+          number: nowNumber + '0',
+        });
+        return;
+      }
+      //실수아니면 0000불가능.
+      if (!isActualNumber) {
         return;
       }
       this.setState({
@@ -121,6 +151,18 @@ class App extends Component {
       if (nowNumber === '0') {
         this.setState({
           number: val,
+        });
+        return;
+      } else if (
+        nowNumber[length - 1] === '0' &&
+        basicMathSigns.includes(nowNumber[length - 2])
+      ) {
+        let newNumber = '';
+        for (let i = 0; i < length - 1; i++) {
+          newNumber += nowNumber[i];
+        }
+        this.setState({
+          number: newNumber + val,
         });
         return;
       }
