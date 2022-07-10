@@ -7,7 +7,6 @@ class AllButton extends Component {
   }
 
   render() {
-    console.log(this.props);
     const mathSigns = ['()', '%', '/', 'X', '-', '+'];
     if (this.props.title === '=') {
       return (
