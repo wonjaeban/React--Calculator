@@ -127,6 +127,7 @@ class App extends Component {
     });
   };
 
+  //이전에 .이 찍혔는지 확인하는 메서드
   checkPastDots = () => {
     let length = this.state.number.length;
     let nowNumber = this.state.number;
@@ -147,6 +148,7 @@ class App extends Component {
     }
   };
 
+  //.버튼을 누른경우 실행되는 메서드
   makeDot = () => {
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
     let nowNumber = this.state.number;
@@ -162,6 +164,7 @@ class App extends Component {
     this.checkPastDots();
   };
 
+  //0버튼을 눌렀을 때 실행되는 메서드
   makeZero = () => {
     let length = this.state.number.length;
     let i = length - 1;
@@ -206,6 +209,7 @@ class App extends Component {
     });
   };
 
+  //1~9까지 숫자 눌렀을 때 실행되는 메서드
   makeNaturalNumbers = (val) => {
     let nowNumber = this.state.number;
     let length = this.state.number.length;
@@ -238,6 +242,7 @@ class App extends Component {
     });
   };
 
+  //기본적인 수학 기호들 눌렀을 때 실행되는 메서드
   makeBasicMathSigns = (val) => {
     let nowNumber = this.state.number;
     let length = this.state.number.length;
@@ -257,12 +262,14 @@ class App extends Component {
     });
   };
 
+  //AC눌렀을 때 실행되는 메서드
   executeAC = () => {
     this.setState({
       number: '0',
     });
   };
 
+  //%눌렀을 때 실행되는 메서드
   makePercent = (val) => {
     let nowNumber = this.state.number;
     let length = this.state.number.length;
@@ -279,6 +286,7 @@ class App extends Component {
     }
   };
 
+  //모든 버튼이 눌러졌을 때 이 메서드부터 시작됩니다.
   makeExpression = (val) => {
     const basicMathSigns = ['/', 'X', '-', '+'];
 
