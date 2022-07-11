@@ -1,56 +1,8 @@
 import { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import AllButton from './AllButton';
 
-class AllButton extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.title != nextProps.title;
-  }
-
-  render() {
-    const mathSigns = ['()', '%', '/', 'X', '-', '+'];
-    if (this.props.title === '=') {
-      return (
-        <TouchableOpacity
-          style={styles.roundButtonEqual}
-          onPress={this.props.onClick}
-        >
-          <Text style={styles.textButtons}>{this.props.title}</Text>
-        </TouchableOpacity>
-      );
-    } else if (mathSigns.includes(this.props.title)) {
-      return (
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() => {
-            this.props.onClick(this.props.title);
-          }}
-        >
-          <Text style={styles.textButtonSign}>{this.props.title}</Text>
-        </TouchableOpacity>
-      );
-    } else if (this.props.title === 'AC') {
-      return (
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() => {
-            this.props.onClick(this.props.title);
-          }}
-        >
-          <Text style={styles.textButtonAC}>{this.props.title}</Text>
-        </TouchableOpacity>
-      );
-    }
-
-    return (
-      <TouchableOpacity
-        style={styles.roundButton}
-        onPress={() => this.props.onClick(this.props.title)}
-      >
-        <Text style={styles.textButtons}>{this.props.title}</Text>
-      </TouchableOpacity>
-    );
-  }
-}
+let countParenthesis = [];
 
 class App extends Component {
   constructor(props) {
@@ -146,6 +98,12 @@ class App extends Component {
       }
       index--;
     }
+  };
+
+  makeParenthesis = () => {
+    let nowNumber = this.state.number;
+    let length = this.state.number.length;
+    const allNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   };
 
   //.버튼을 누른경우 실행되는 메서드
@@ -286,25 +244,6 @@ class App extends Component {
     }
   };
 
-  //모든 버튼이 눌러졌을 때 이 메서드부터 시작됩니다.
-  makeExpression = (val) => {
-    const basicMathSigns = ['/', 'X', '-', '+'];
-
-    if (val === '.') {
-      this.makeDot();
-    } else if (val === '0') {
-      this.makeZero();
-    } else if (!isNaN(parseInt(val))) {
-      this.makeNaturalNumbers(val);
-    } else if (basicMathSigns.includes(val)) {
-      this.makeBasicMathSigns(val);
-    } else if (val === 'AC') {
-      this.executeAC();
-    } else if (val === '%') {
-      this.makePercent(val);
-    }
-  };
-
   render() {
     return (
       <View style={styles.container}>
@@ -313,33 +252,33 @@ class App extends Component {
         </View>
         <View style={styles.downPlace}>
           <View style={styles.buttons}>
-            <AllButton title="AC" onClick={this.makeExpression}></AllButton>
+            <AllButton title="AC" onClick={this.executeAC}></AllButton>
             <AllButton title="()" onClick={this.makeExpression}></AllButton>
-            <AllButton title="%" onClick={this.makeExpression}></AllButton>
-            <AllButton title="/" onClick={this.makeExpression}></AllButton>
+            <AllButton title="%" onClick={this.makePercent}></AllButton>
+            <AllButton title="/" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons2}>
-            <AllButton title="7" onClick={this.makeExpression}></AllButton>
-            <AllButton title="8" onClick={this.makeExpression}></AllButton>
-            <AllButton title="9" onClick={this.makeExpression}></AllButton>
-            <AllButton title="X" onClick={this.makeExpression}></AllButton>
+            <AllButton title="7" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="8" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="9" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="X" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons3}>
-            <AllButton title="4" onClick={this.makeExpression}></AllButton>
-            <AllButton title="5" onClick={this.makeExpression}></AllButton>
-            <AllButton title="6" onClick={this.makeExpression}></AllButton>
-            <AllButton title="-" onClick={this.makeExpression}></AllButton>
+            <AllButton title="4" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="5" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="6" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="-" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons4}>
-            <AllButton title="1" onClick={this.makeExpression}></AllButton>
-            <AllButton title="2" onClick={this.makeExpression}></AllButton>
-            <AllButton title="3" onClick={this.makeExpression}></AllButton>
-            <AllButton title="+" onClick={this.makeExpression}></AllButton>
+            <AllButton title="1" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="2" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="3" onClick={this.makeNaturalNumbers}></AllButton>
+            <AllButton title="+" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons5}>
             <AllButton title="+/-" onClick={this.makeExpression}></AllButton>
-            <AllButton title="0" onClick={this.makeExpression}></AllButton>
-            <AllButton title="." onClick={this.makeExpression}></AllButton>
+            <AllButton title="0" onClick={this.makeZero}></AllButton>
+            <AllButton title="." onClick={this.makeDot}></AllButton>
             <AllButton title="=" onClick={this.makeResult}></AllButton>
           </View>
         </View>
@@ -404,36 +343,6 @@ const styles = StyleSheet.create({
   },
   calculatedNumber: {
     fontSize: 50,
-  },
-  roundButton: {
-    width: 70,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 100,
-    backgroundColor: '#292929',
-  },
-  roundButtonEqual: {
-    width: 70,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 100,
-    backgroundColor: 'green',
-  },
-  textButtons: {
-    color: 'white',
-    fontSize: 30,
-  },
-  textButtonSign: {
-    color: 'green',
-    fontSize: 30,
-  },
-  textButtonAC: {
-    color: 'red',
-    fontSize: 30,
   },
 });
 
