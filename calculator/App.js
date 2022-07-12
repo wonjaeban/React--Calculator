@@ -1,23 +1,25 @@
 import { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import AllButton from './AllButton';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 let countParenthesis = [];
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      number: '0',
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     number: '0',
+  //   };
+  // }
 
   //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
   makeResult = () => {
     const basicMathSigns = ['/', 'X', '-', '+'];
-    const numberAndSigns = this.state.number;
+    const numberAndSigns = store.getState();
     //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
-    if (basicMathSigns.includes(numberAndSigns[this.state.number.length - 1])) {
+    if (basicMathSigns.includes(numberAndSigns[numberAndSigns.length - 1])) {
       alert('완성되지 않은 수식입니다!');
       return;
     }
@@ -74,23 +76,22 @@ class App extends Component {
         result = result + numbers[i + 1];
       }
     }
-    this.setState({
-      number: result.toString(),
-    });
+
+    store.dispatch({ type: 'new', text: result.toString() });
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
   checkPastDots = () => {
-    let length = this.state.number.length;
-    let nowNumber = this.state.number;
+    let length = store.getState().length;
+    let nowNumber = store.getState();
     let index = length - 1;
     const pastMathSigns = [')', '%', '/', 'X', '-', '+'];
+
     while (1) {
       // 이전에 .이 한번도 없었다면
       if (index === -1 || pastMathSigns.includes(nowNumber[index])) {
-        this.setState({
-          number: nowNumber + '.',
-        });
+        store.dispatch({ type: 'new', text: nowNumber + '.' });
+
         return;
       } //.이 있는데 또 . 찍으려는 경우니깐 무시합니다.
       else if (nowNumber[index] === '.') {
@@ -109,14 +110,13 @@ class App extends Component {
   //.버튼을 누른경우 실행되는 메서드
   makeDot = () => {
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
-    let nowNumber = this.state.number;
-    let length = this.state.number.length;
+    let nowNumber = store.getState();
+    let length = store.getState().length;
     if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
       return;
     } else if (nowNumber === '0') {
-      this.setState({
-        number: '0.',
-      });
+      store.dispatch({ type: 'new', text: '0' });
+
       return;
     }
     this.checkPastDots();
@@ -124,17 +124,16 @@ class App extends Component {
 
   //0버튼을 눌렀을 때 실행되는 메서드
   makeZero = () => {
-    let length = this.state.number.length;
+    let length = store.getState().length;
     let i = length - 1;
     let isActualNumber = false;
     const basicMathSigns = ['/', 'X', '-', '+'];
     const naturalNumbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    let nowNumber = this.state.number;
+    let nowNumber = store.getState();
     //기호뒤에는 0 가능
     if (basicMathSigns.includes(nowNumber[length - 1])) {
-      this.setState({
-        number: nowNumber + '0',
-      });
+      store.dispatch({ type: 'new', text: nowNumber + '0' });
+
       return;
     }
     while (1) {
@@ -153,29 +152,25 @@ class App extends Component {
       naturalNumbers.includes(nowNumber[i]) ||
       naturalNumbers.includes(nowNumber[i + 1])
     ) {
-      this.setState({
-        number: nowNumber + '0',
-      });
+      store.dispatch({ type: 'new', text: nowNumber + '0' });
+
       return;
     }
     //실수아니면 0000불가능.
     if (!isActualNumber) {
       return;
     }
-    this.setState({
-      number: nowNumber + '0',
-    });
+    store.dispatch({ type: 'new', text: nowNumber + '0' });
   };
 
   //1~9까지 숫자 눌렀을 때 실행되는 메서드
   makeNaturalNumbers = (val) => {
-    let nowNumber = this.state.number;
-    let length = this.state.number.length;
+    let nowNumber = store.getState();
+    let length = store.getState().length;
     const basicMathSigns = ['/', 'X', '-', '+'];
     if (nowNumber === '0') {
-      this.setState({
-        number: val,
-      });
+      store.dispatch({ type: 'new', text: val });
+
       return;
     } else if (
       nowNumber[length - 1] === '0' &&
@@ -185,58 +180,48 @@ class App extends Component {
       for (let i = 0; i < length - 1; i++) {
         newNumber += nowNumber[i];
       }
-      this.setState({
-        number: newNumber + val,
-      });
+      store.dispatch({ type: 'new', text: newNumber + val });
+
       return;
     } else if (nowNumber[length - 1] === '%') {
-      this.setState({
-        number: nowNumber + 'X' + val,
-      });
+      store.dispatch({ type: 'new', text: nowNumber + 'X' + val });
+
       return;
     }
-    this.setState({
-      number: nowNumber + val,
-    });
+    store.dispatch({ type: 'new', text: nowNumber + val });
   };
 
   //기본적인 수학 기호들 눌렀을 때 실행되는 메서드
   makeBasicMathSigns = (val) => {
-    let nowNumber = this.state.number;
-    let length = this.state.number.length;
+    let nowNumber = store.getState();
+    let length = store.getState().length;
     const basicMathSigns = ['/', 'X', '-', '+'];
     if (nowNumber[length - 1] === '(' || nowNumber[length - 1] === '.') {
       return;
     } else if (basicMathSigns.includes(nowNumber[length - 1])) {
       let newSentence = nowNumber.substring(0, length - 1);
       newSentence += val;
-      this.setState({
-        number: newSentence,
-      });
+      store.dispatch({ type: 'new', text: newSentence });
+
       return;
     }
-    this.setState({
-      number: nowNumber + val,
-    });
+    store.dispatch({ type: 'new', text: nowNumber + val });
   };
 
   //AC눌렀을 때 실행되는 메서드
   executeAC = () => {
-    this.setState({
-      number: '0',
-    });
+    store.dispatch({ type: 'new', text: '0' });
   };
 
   //%눌렀을 때 실행되는 메서드
   makePercent = (val) => {
-    let nowNumber = this.state.number;
-    let length = this.state.number.length;
+    let nowNumber = store.getState();
+    let length = store.getState().length;
     const dotNextPositionSigns = ['.', '(', ')', '%', '/', 'X', '-', '+'];
 
     if (!isNaN(parseInt(nowNumber[length - 1]))) {
-      this.setState({
-        number: nowNumber + val,
-      });
+      store.dispatch({ type: 'new', text: nowNumber + val });
+
       return;
     } else if (dotNextPositionSigns.includes(nowNumber[length - 1])) {
       alert('완성되지 수식입니다!');
@@ -246,43 +231,84 @@ class App extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.upperPlace}>
-          <Text style={styles.calculatedNumber}>{this.state.number}</Text>
+      <Provider store={store}>
+        <View style={styles.container}>
+          <View style={styles.upperPlace}>
+            <Text style={styles.calculatedNumber}>{store.getState()}</Text>
+          </View>
+          <View style={styles.downPlace}>
+            <View style={styles.buttons}>
+              <AllButton title="AC" onClick={this.executeAC}></AllButton>
+              <AllButton title="()" onClick={this.makeExpression}></AllButton>
+              <AllButton title="%" onClick={this.makePercent}></AllButton>
+              <AllButton
+                title="/"
+                onClick={this.makeBasicMathSigns}
+              ></AllButton>
+            </View>
+            <View style={styles.buttons2}>
+              <AllButton
+                title="7"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="8"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="9"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="X"
+                onClick={this.makeBasicMathSigns}
+              ></AllButton>
+            </View>
+            <View style={styles.buttons3}>
+              <AllButton
+                title="4"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="5"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="6"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="-"
+                onClick={this.makeBasicMathSigns}
+              ></AllButton>
+            </View>
+            <View style={styles.buttons4}>
+              <AllButton
+                title="1"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="2"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="3"
+                onClick={this.makeNaturalNumbers}
+              ></AllButton>
+              <AllButton
+                title="+"
+                onClick={this.makeBasicMathSigns}
+              ></AllButton>
+            </View>
+            <View style={styles.buttons5}>
+              <AllButton title="+/-" onClick={this.makeExpression}></AllButton>
+              <AllButton title="0" onClick={this.makeZero}></AllButton>
+              <AllButton title="." onClick={this.makeDot}></AllButton>
+              <AllButton title="=" onClick={this.makeResult}></AllButton>
+            </View>
+          </View>
         </View>
-        <View style={styles.downPlace}>
-          <View style={styles.buttons}>
-            <AllButton title="AC" onClick={this.executeAC}></AllButton>
-            <AllButton title="()" onClick={this.makeExpression}></AllButton>
-            <AllButton title="%" onClick={this.makePercent}></AllButton>
-            <AllButton title="/" onClick={this.makeBasicMathSigns}></AllButton>
-          </View>
-          <View style={styles.buttons2}>
-            <AllButton title="7" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="8" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="9" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="X" onClick={this.makeBasicMathSigns}></AllButton>
-          </View>
-          <View style={styles.buttons3}>
-            <AllButton title="4" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="5" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="6" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="-" onClick={this.makeBasicMathSigns}></AllButton>
-          </View>
-          <View style={styles.buttons4}>
-            <AllButton title="1" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="2" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="3" onClick={this.makeNaturalNumbers}></AllButton>
-            <AllButton title="+" onClick={this.makeBasicMathSigns}></AllButton>
-          </View>
-          <View style={styles.buttons5}>
-            <AllButton title="+/-" onClick={this.makeExpression}></AllButton>
-            <AllButton title="0" onClick={this.makeZero}></AllButton>
-            <AllButton title="." onClick={this.makeDot}></AllButton>
-            <AllButton title="=" onClick={this.makeResult}></AllButton>
-          </View>
-        </View>
-      </View>
+      </Provider>
     );
   }
 }
@@ -345,5 +371,15 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
 });
+
+function reducer(number1 = '0', action) {
+  if (action.type === 'new') {
+    number1 = action.text;
+  }
+  console.log(number1);
+  return number1;
+}
+
+let store = createStore(reducer);
 
 export default App;
