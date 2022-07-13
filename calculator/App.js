@@ -2,15 +2,9 @@ import { Component } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import Calculator from './Calculator';
+import { reducer } from './Reducer';
 
-function reducer(number1 = '0', action) {
-  if (action.type === 'new') {
-    number1 = action.text;
-  }
-  return number1;
-}
-
-let store = createStore(reducer);
+const store = createStore(reducer);
 
 class App extends Component {
   render() {
