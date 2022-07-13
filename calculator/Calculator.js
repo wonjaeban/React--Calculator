@@ -207,10 +207,23 @@ class Calculator extends Component {
   makeParenthesis = () => {
     let nowNumber = this.props.number;
     let length = this.props.number.length;
+    //숫자로 끝나거나 %로 끝날때
     if (
       !isNaN(parseInt(nowNumber[length - 1])) ||
-      nowNumber[length - 1] === '%'
+      nowNumber[length - 1] === '%' ||
+      nowNumber[length - 1] === '.'
     ) {
+      //이전에 괄호가 있었다면
+      if (countParenthesis > 0) {
+        this.props.plusSomething(')');
+        countParenthesis--;
+        return;
+      }
+      //이전에 괄호가 없었다면
+      this.props.plusSomething('X(');
+      countParenthesis++;
+      return;
+    } else if (nowNumber[length - 1] === ')') {
       if (countParenthesis > 0) {
         this.props.plusSomething(')');
         countParenthesis--;
@@ -219,7 +232,12 @@ class Calculator extends Component {
       this.props.plusSomething('X(');
       countParenthesis++;
       return;
+    } else if (nowNumber[length - 1] === '(') {
+      this.props.plusSomething('(');
+      countParenthesis++;
+      return;
     }
+
     this.props.plusSomething('(');
   };
 
