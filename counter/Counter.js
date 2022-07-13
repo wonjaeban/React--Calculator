@@ -1,31 +1,33 @@
-import {Component} from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 const INCREASE = 'INCREASE';
 const DECREASE = 'DECREASE';
 const RESET = 'RESET';
 
-class Counter extends Component {
-  
-  render() {
+function Counter() {
+    const {number} = useSelector(state => ({
+        number: state
+      }));
+
+    const dispatch = useDispatch();
+
     return (
       <View style={styles.container}>
-        <Text style={styles.fonts}>{this.props.number}</Text>
+        <Text style={styles.fonts}>{number}</Text>
           <View style={styles.fixToText}>
-            <TouchableOpacity style={styles.appButtonMinus} onPress={this.props.decrease}>
+            <TouchableOpacity style={styles.appButtonMinus} onPress={() => {dispatch({type: DECREASE}) }}>
               <Text style={styles.appButtonText}>-</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.appButtonContainer} onPress={this.props.reset}>
+            <TouchableOpacity style={styles.appButtonContainer} onPress={() => {dispatch({type: RESET}) }}>
               <Text style={styles.appButtonText}>RESET</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.appButtonPlus} onPress={this.props.increase}>
+            <TouchableOpacity style={styles.appButtonPlus} onPress={() => {dispatch({type: INCREASE}) }}>
               <Text style={styles.appButtonText}>+</Text>
             </TouchableOpacity>
           </View>
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
@@ -40,8 +42,6 @@ const styles = StyleSheet.create({
   },
   fixToText:{
     flexDirection: 'row',
-    
-    
   },
   appButtonContainer: {
     elevation: 8,
@@ -78,26 +78,4 @@ const styles = StyleSheet.create({
   }
 })
 
-//store에 있는 값이 업데이트 될때마다 호출됩니다. return값은 props가 됩니다.
-const mapStateToProps = (state) => {
-  return {
-    number: state,
-  };
-};
-
-//store에 대한 dispatch기능을 제공합니다. 이를 통해 component에서 store에 대한 dispatch를 매번 할 필요가 없어집니다.
-const mapDispatchToProps = (dispatch) => {
-  return {
-    increase: () => {
-      dispatch({ type: INCREASE});
-    },
-    decrease: () => {
-      dispatch({ type: DECREASE});
-    },
-    reset: () => {
-      dispatch({ type: RESET});
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Counter);
+export default Counter;
