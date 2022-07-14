@@ -1,11 +1,9 @@
 import { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import AllButton from './AllButton';
-import { connect } from 'react-redux';
 
 let countParenthesis = 0;
-const NEW = 'new';
-const PLUS_Something = 'plusSomething';
+
 const BASIC_MATH_SIGN = ['/', 'X', '-', '+'];
 const NATURAL_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const ALL_MATH_SIGN = ['.', '(', ')', '%', '/', 'X', '-', '+'];
@@ -14,7 +12,7 @@ const PLUS_MINUS = ['-', '+'];
 class Calculator extends Component {
   //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
   makeResult = () => {
-    const numberAndSigns = this.props.number;
+    const { number, onNew } = this.props;
     let signs = [];
     let newSigns = [];
     let i = 0;
@@ -24,12 +22,12 @@ class Calculator extends Component {
     let intermediateResult = [];
 
     //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
-    if (BASIC_MATH_SIGN.includes(numberAndSigns[numberAndSigns.length - 1])) {
+    if (BASIC_MATH_SIGN.includes(number[number.length - 1])) {
       alert('완성되지 않은 수식입니다!');
       return;
     }
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
-    const stringNumbers = numberAndSigns.split(/[+, \-, X, /]/);
+    const stringNumbers = number.split(/[+, \-, X, /]/);
     for (let i = 0; i < stringNumbers.length; i++) {
       //기호들을 기준으로 쪼갠후에 숫자뒤에 %가 붙어있다면 실수로 바꿔줍니다.
       if (stringNumbers[i].includes('%')) {
@@ -39,9 +37,9 @@ class Calculator extends Component {
     }
     const numbers = stringNumbers.map((each) => Number(each));
 
-    for (i = 0; i < numberAndSigns.length; i++) {
-      if (BASIC_MATH_SIGN.includes(numberAndSigns[i])) {
-        signs.push(numberAndSigns[i]);
+    for (i = 0; i < number.length; i++) {
+      if (BASIC_MATH_SIGN.includes(number[i])) {
+        signs.push(number[i]);
       }
     }
 
@@ -76,25 +74,24 @@ class Calculator extends Component {
         result = result + numbers[i + 1];
       }
     }
-
-    this.props.new(result.toString());
+    onNew(result.toString());
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
   checkPastDots = () => {
-    const length = this.props.number.length;
-    const nowNumber = this.props.number;
+    const { number, onPlus } = this.props;
+    const length = number.length;
     let index = length - 1;
     const pastMathSigns = [')', '%', '/', 'X', '-', '+'];
 
     while (1) {
       // 이전에 .이 한번도 없었다면
-      if (index === -1 || pastMathSigns.includes(nowNumber[index])) {
-        this.props.plusSomething('.');
+      if (index === -1 || pastMathSigns.includes(number[index])) {
+        onPlus('.');
 
         return;
       } //.이 있는데 또 . 찍으려는 경우니깐 무시합니다.
-      else if (nowNumber[index] === '.') {
+      else if (number[index] === '.') {
         return;
       }
       index--;
@@ -103,12 +100,12 @@ class Calculator extends Component {
 
   //.버튼을 누른경우 실행되는 메서드
   makeDot = () => {
-    const nowNumber = this.props.number;
-    const length = this.props.number.length;
-    if (ALL_MATH_SIGN.includes(nowNumber[length - 1])) {
+    const { number, onPlus } = this.props;
+    const length = number.length;
+    if (ALL_MATH_SIGN.includes(number[length - 1])) {
       return;
-    } else if (nowNumber === '0') {
-      this.props.plusSomething('.');
+    } else if (number === '0') {
+      onPlus('.');
 
       return;
     }
@@ -117,23 +114,23 @@ class Calculator extends Component {
 
   //0버튼을 눌렀을 때 실행되는 메서드
   makeZero = () => {
-    const length = this.props.number.length;
+    const { number, onPlus } = this.props;
+    const length = number.length;
     let i = length - 1;
     let isActualNumber = false;
 
-    const nowNumber = this.props.number;
     //기호뒤에는 0 가능
-    if (BASIC_MATH_SIGN.includes(nowNumber[length - 1])) {
-      this.props.plusSomething('0');
+    if (BASIC_MATH_SIGN.includes(number[length - 1])) {
+      onPlus('0');
 
       return;
     }
     while (1) {
       //기호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
-      if (i === 0 || BASIC_MATH_SIGN.includes(nowNumber[i])) {
+      if (i === 0 || BASIC_MATH_SIGN.includes(number[i])) {
         break;
       } //.을 만나면 소수다.
-      else if (nowNumber[i] === '.') {
+      else if (number[i] === '.') {
         isActualNumber = true;
         break;
       }
@@ -141,10 +138,10 @@ class Calculator extends Component {
     }
     // 기호를 만나거나 인덱스를 벗어나기 전까지 가장 첫번째 요소가 1~9 사이라면 2000000이 가능해야한다.
     if (
-      NATURAL_NUMBER.includes(nowNumber[i]) ||
-      NATURAL_NUMBER.includes(nowNumber[i + 1])
+      NATURAL_NUMBER.includes(number[i]) ||
+      NATURAL_NUMBER.includes(number[i + 1])
     ) {
-      this.props.plusSomething('0');
+      onPlus('0');
 
       return;
     }
@@ -152,111 +149,112 @@ class Calculator extends Component {
     if (!isActualNumber) {
       return;
     }
-    this.props.plusSomething('0');
+    onPlus('0');
   };
 
   //1~9까지 숫자 눌렀을 때 실행되는 메서드
   makeNaturalNumbers = (val) => {
-    const nowNumber = this.props.number;
-    const length = this.props.number.length;
+    const { number, onNew, onPlus } = this.props;
+    const length = number.length;
     let newNumber = '';
     let i = 0;
-    if (nowNumber === '0') {
-      this.props.new(val);
+    if (number === '0') {
+      onNew(val);
 
       return;
     } else if (
-      nowNumber[length - 1] === '0' &&
-      BASIC_MATH_SIGN.includes(nowNumber[length - 2])
+      number[length - 1] === '0' &&
+      BASIC_MATH_SIGN.includes(number[length - 2])
     ) {
       for (i = 0; i < length - 1; i++) {
-        newNumber += nowNumber[i];
+        newNumber += number[i];
       }
-      this.props.plusSomething(val);
+      onPlus(val);
 
       return;
-    } else if (nowNumber[length - 1] === '%') {
-      this.props.plusSomething('X' + val);
+    } else if (number[length - 1] === '%') {
+      onPlus('X' + val);
 
       return;
     }
-    this.props.plusSomething(val);
+    onPlus(val);
   };
 
   //기본적인 수학 기호들 눌렀을 때 실행되는 메서드
   makeBasicMathSigns = (val) => {
-    const nowNumber = this.props.number;
-    const length = this.props.number.length;
+    const { number, onNew, onPlus } = this.props;
+    const length = number.length;
     let newSentence = '';
 
-    if (nowNumber[length - 1] === '.') {
+    if (number[length - 1] === '.') {
       return;
-    } else if (BASIC_MATH_SIGN.includes(nowNumber[length - 1])) {
-      newSentence = nowNumber.substring(0, length - 1);
+    } else if (BASIC_MATH_SIGN.includes(number[length - 1])) {
+      newSentence = number.substring(0, length - 1);
       newSentence += val;
-      this.props.new(newSentence);
+      onNew(newSentence);
 
       return;
-    } else if (nowNumber[length - 1] === '(' && !PLUS_MINUS.includes(val)) {
+    } else if (number[length - 1] === '(' && !PLUS_MINUS.includes(val)) {
       return;
     }
-    this.props.plusSomething(val);
+    onPlus(val);
   };
 
   //괄호 눌렀을 때
   makeParenthesis = () => {
-    let nowNumber = this.props.number;
-    let length = this.props.number.length;
+    const { number, onPlus } = this.props;
+    let length = number.length;
     //숫자로 끝나거나 %로 끝날때
     if (
-      !isNaN(parseInt(nowNumber[length - 1])) ||
-      nowNumber[length - 1] === '%' ||
-      nowNumber[length - 1] === '.'
+      !isNaN(parseInt(number[length - 1])) ||
+      number[length - 1] === '%' ||
+      number[length - 1] === '.'
     ) {
       //이전에 괄호가 있었다면
       if (countParenthesis > 0) {
-        this.props.plusSomething(')');
+        onPlus(')');
         countParenthesis--;
         return;
       }
       //이전에 괄호가 없었다면
-      this.props.plusSomething('X(');
+      onPlus('X(');
       countParenthesis++;
       return;
-    } else if (nowNumber[length - 1] === ')') {
+    } else if (number[length - 1] === ')') {
       if (countParenthesis > 0) {
-        this.props.plusSomething(')');
+        onPlus(')');
         countParenthesis--;
         return;
       }
-      this.props.plusSomething('X(');
+      onPlus('X(');
       countParenthesis++;
       return;
-    } else if (nowNumber[length - 1] === '(') {
-      this.props.plusSomething('(');
+    } else if (number[length - 1] === '(') {
+      onPlus('(');
       countParenthesis++;
       return;
     }
 
-    this.props.plusSomething('(');
+    onPlus('(');
   };
 
   //AC눌렀을 때 실행되는 메서드
   executeAC = () => {
-    this.props.new('0');
+    const { onNew } = this.props;
+    onNew('0');
     countParenthesis = 0;
   };
 
   //%눌렀을 때 실행되는 메서드
   makePercent = (val) => {
-    let nowNumber = this.props.number;
-    let length = this.props.number.length;
+    const { number, onPlus } = this.props;
+    let length = number.length;
 
-    if (!isNaN(parseInt(nowNumber[length - 1]))) {
-      this.props.plusSomething(val);
+    if (!isNaN(parseInt(number[length - 1]))) {
+      onPlus(val);
 
       return;
-    } else if (ALL_MATH_SIGN.includes(nowNumber[length - 1])) {
+    } else if (ALL_MATH_SIGN.includes(number[length - 1])) {
       alert('완성되지 수식입니다!');
       return;
     }
@@ -364,23 +362,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//store에 있는 값이 업데이트 될때마다 호출됩니다. return값은 props가 됩니다.
-const mapStateToProps = (state) => {
-  return {
-    number: state,
-  };
-};
-
-//store에 대한 dispatch기능을 제공합니다. 이를 통해 component에서 store에 대한 dispatch를 매번 할 필요가 없어집니다.
-const mapDispatchToProps = (dispatch) => {
-  return {
-    new: (newSentence) => {
-      dispatch({ type: NEW, text: newSentence });
-    },
-    plusSomething: (something) => {
-      dispatch({ type: PLUS_Something, text: something });
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Calculator);
+export default Calculator;

@@ -1,16 +1,16 @@
 import { Component } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import Calculator from './Calculator';
-import { reducer } from './Reducer';
+import calculator from './src/modules/calculator';
+import CalculatorContainer from './src/containers/CalculatorContainer';
 
-const store = createStore(reducer);
+const store = createStore(calculator);
 
 class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Calculator />
+        <CalculatorContainer />
       </Provider>
     );
   }
