@@ -1,33 +1,17 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React from 'react';
+import CounterContainer from './src/containers/CounterContainer';
+import { createStore } from 'redux';
+import counter from "./src/modules/counter";
+import { Provider } from 'react-redux';
 
+const store = createStore(counter); // 스토어를 만듭니다.
 
-export default function App() {
-  let [counter, setCounter] = useState(0);
-  
+function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.fonts}>카운터 : {counter}</Text>
-        <View style={styles.fixToText}>
-          <Button  title='-1' onPress={() => setCounter(counter - 1)} />
-          <Button  title='+1' onPress={() => setCounter(counter + 1)}/>
-        </View>
-    </View>
+    <Provider store={store}>
+      <CounterContainer />
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fonts:{
-    fontSize:40
-  },
-  fixToText:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-})
+export default App;
