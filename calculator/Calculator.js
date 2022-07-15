@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 class Calculator extends Component {
   //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
   makeResult = () => {
+    this.props.makeResult(this.props.number);
     const basicMathSigns = ['/', 'X', '-', '+'];
     const numberAndSigns = this.props.number;
 
@@ -67,8 +68,7 @@ class Calculator extends Component {
         result = result + numbers[i + 1];
       }
     }
-
-    this.props.change(result.toString());
+    result.toString();
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
@@ -326,8 +326,8 @@ const mapStateToProps = (state) => {
 //store에 대한 dispatch기능을 제공합니다. 이를 통해 component에서 store에 대한 dispatch를 매번 할 필요가 없어집니다(change를 통해 진행 가능).
 const mapDispatchToProps = (dispatch) => {
   return {
-    change: (newSentence) => {
-      dispatch({ type: 'new', text: newSentence });
+    makeResult: (sentence) => {
+      dispatch({ type: 'new', text: sentence });
     },
   };
 };
