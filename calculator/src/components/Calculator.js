@@ -74,7 +74,35 @@ class Calculator extends Component {
         result = result + numbers[i + 1];
       }
     }
+    const obj = { number: number, result: result.toString() };
+    this.connectPost(obj);
     onNew(result.toString());
+  };
+
+  connectPost = (obj) => {
+    const URL = 'http://10.1.2.156:3000/post';
+    fetch(URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(obj),
+    });
+  };
+
+  connectGet = () => {
+    const URL = 'http://10.1.2.156:3000/get';
+    fetch(URL)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.output);
+        return data.rowsAffected;
+      });
+  };
+
+  callHistory = () => {
+    const { onNew } = this.props;
+    let allHistory = this.connectGet();
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
@@ -292,7 +320,7 @@ class Calculator extends Component {
             <AllButton title="+" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons5}>
-            <AllButton title="+/-" onClick={this.makeExpression}></AllButton>
+            <AllButton title="HS" onClick={this.callHistory}></AllButton>
             <AllButton title="0" onClick={this.makeZero}></AllButton>
             <AllButton title="." onClick={this.makeDot}></AllButton>
             <AllButton title="=" onClick={this.makeResult}></AllButton>
