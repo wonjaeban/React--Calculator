@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import AllButton from './AllButton';
+import History from './History';
 
 let countParenthesis = 0;
 
@@ -80,7 +81,8 @@ class Calculator extends Component {
   };
 
   connectPost = (obj) => {
-    const URL = 'http://10.1.2.156:3000/post';
+    // const URL = 'http://10.1.2.156:3000/post';
+    const URL = 'http://172.20.10.4:3000/post';
     fetch(URL, {
       method: 'POST',
       headers: {
@@ -88,21 +90,6 @@ class Calculator extends Component {
       },
       body: JSON.stringify(obj),
     });
-  };
-
-  connectGet = () => {
-    const URL = 'http://10.1.2.156:3000/get';
-    fetch(URL)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data.output);
-        return data.rowsAffected;
-      });
-  };
-
-  callHistory = () => {
-    const { onNew } = this.props;
-    let allHistory = this.connectGet();
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
@@ -320,7 +307,7 @@ class Calculator extends Component {
             <AllButton title="+" onClick={this.makeBasicMathSigns}></AllButton>
           </View>
           <View style={styles.buttons5}>
-            <AllButton title="HS" onClick={this.callHistory}></AllButton>
+            <History title="HS"></History>
             <AllButton title="0" onClick={this.makeZero}></AllButton>
             <AllButton title="." onClick={this.makeDot}></AllButton>
             <AllButton title="=" onClick={this.makeResult}></AllButton>
