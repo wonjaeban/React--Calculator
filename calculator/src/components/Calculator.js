@@ -12,7 +12,7 @@ const PLUS_MINUS = ['-', '+'];
 
 class Calculator extends Component {
   //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
-  makeResult = () => {
+  makeResult = async () => {
     const { number, onNew } = this.props;
     let signs = [];
     let newSigns = [];
@@ -76,20 +76,45 @@ class Calculator extends Component {
       }
     }
     const obj = { number: number, result: result.toString() };
-    this.connectPost(obj);
+    const fail = {
+      result: '서버에 문제가 발생했습니다! 히스토리가 저장되지 않았습니다!',
+    };
+    let postResult = await this.connectPost(obj);
+    if (!postResult || postResult.result === fail.result) {
+      alert('서버가 응답하지 않습니다!');
+    }
+
+    console.log(postResult);
+
     onNew(result.toString());
   };
 
   connectPost = (obj) => {
     const URL = 'http://10.1.2.156:3000/post';
-    // const URL = 'http://172.20.10.4:3000/post';
-    fetch(URL, {
+    const controller = new AbortController();
+
+    // 2 second timeout:
+    setTimeout(() => controller.abort(), 2000);
+
+    let result = fetch(URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
       },
       body: JSON.stringify(obj),
-    });
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // 응답이 제대로 오지 않을 때(URL오류나 request 오류시에)
+          throw Error('could not fetch the data that resource');
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return result;
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
