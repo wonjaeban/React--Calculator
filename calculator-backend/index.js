@@ -26,14 +26,8 @@ app.get('/get', (req, res) => {
     let q = "SELECT * FROM calculator";
     let request = new sql.Request();
     request.stream = true;
-    request.query(q, function(err, rows) {
-        console.log(rows);
-
-        }
-        
-        
-        
-    )
+    let temp = request.query(q);
+    console.log(temp);
 });
 
 const port = 3000; // 사용할 포트 번호를 port 변수에 넣습니다. 

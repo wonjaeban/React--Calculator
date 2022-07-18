@@ -220,7 +220,6 @@ class Calculator extends Component {
       newSentence = number.substring(0, length - 1);
       newSentence += val;
       onNew(newSentence);
-
       return;
     } else if (number[length - 1] === '(' && !PLUS_MINUS.includes(val)) {
       return;
