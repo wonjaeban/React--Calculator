@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import axios from 'axios';
 import {
   Text,
   TouchableOpacity,
@@ -27,8 +26,8 @@ class History extends Component {
   };
 
   connectGet = () => {
-    // const URL = 'http://10.1.2.156:3000/get';
-    const URL = 'http://172.20.10.4:3000/get';
+    const URL = 'http://10.1.2.156:3000/get';
+    // const URL = 'http://172.20.10.4:3000/get';
     let historyDatas = fetch(URL).then((response) => response.json());
 
     return historyDatas;
@@ -63,8 +62,8 @@ class History extends Component {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {historys.map((history) => (
-                <Texts style={styles.modalText} history={history} />
+              {historys.map((history, index) => (
+                <Texts style={styles.modalText} history={history} key={index} />
               ))}
 
               <Pressable

@@ -81,8 +81,8 @@ class Calculator extends Component {
   };
 
   connectPost = (obj) => {
-    // const URL = 'http://10.1.2.156:3000/post';
-    const URL = 'http://172.20.10.4:3000/post';
+    const URL = 'http://10.1.2.156:3000/post';
+    // const URL = 'http://172.20.10.4:3000/post';
     fetch(URL, {
       method: 'POST',
       headers: {
