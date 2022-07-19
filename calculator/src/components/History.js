@@ -58,23 +58,14 @@ class History extends Component {
     } else if (allHistory.length === 0) {
       alert('히스토리가 존재하지 않습니다!');
     }
-    console.log(allHistory);
+    // console.log(allHistory);
     this.setAllHistory(allHistory);
   };
 
   render() {
     const { modalVisible, allHistory } = this.state;
-    let historys = [];
-    let count = 0;
-    if (allHistory) {
-      let i = allHistory.length - 1;
-      //최근 10개 히스토리만 보여줍니다.
-      while (i >= 0 && count <= 9) {
-        historys.push(allHistory[i]);
-        i--;
-        count++;
-      }
-    }
+
+    let historys = allHistory.slice(0, 10);
 
     return (
       <View>
