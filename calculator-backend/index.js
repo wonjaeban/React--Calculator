@@ -3,7 +3,7 @@ const app = express(); //express를 실행하여 app object를 초기화 합니�
 
 app.use(express.json());
 
-app.post("/post", (req, res) => {
+app.post("/history", (req, res) => {
   const mathExpression = req.body.number;
   const value = req.body.result;
   const success = {result: "DB등록이 완료되었습니다!"};
@@ -24,7 +24,7 @@ app.post("/post", (req, res) => {
   });
 });
 
-app.get("/get", (req, res) => {
+app.get("/historys", (req, res) => {
   const fail = {result: "서버에 문제가 발생했습니다! 히스토리를 불러오지 못했습니다!"};
   let q = "SELECT * FROM calculator";
   let request = new sql.Request();

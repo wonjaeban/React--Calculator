@@ -18,15 +18,15 @@ class History extends Component {
   }
 
   setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible, allHistory: this.state.allHistory });
+    this.setState({ modalVisible: visible });
   };
 
   setAllHistory = (data) => {
-    this.setState({ modalVisible: this.state.modalVisible, allHistory: data });
+    this.setState({ allHistory: data });
   };
 
   connectGet = () => {
-    const URL = 'http://10.1.2.156:3000/get';
+    const URL = 'http://10.1.2.156:3000/historys';
     const controller = new AbortController();
 
     // 2 second timeout:

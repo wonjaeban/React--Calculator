@@ -11,25 +11,18 @@ const ALL_MATH_SIGN = ['.', '(', ')', '%', '/', 'X', '-', '+'];
 const PLUS_MINUS = ['-', '+'];
 
 class Calculator extends Component {
-  //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
-  makeResult = async () => {
-    const { number, onNew } = this.props;
-    let signs = [];
-    let newSigns = [];
-    let i = 0;
-    let decreaseIndex = 0;
-    let result = 0;
+  //+, -, *, / 계산하는 메서드입니다.
+  calculateBasicMathSigns = (number) => {
     let percentNumber = '';
+    let signs = [];
     let intermediateResult = [];
-
-    //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
-    if (BASIC_MATH_SIGN.includes(number[number.length - 1])) {
-      alert('완성되지 않은 수식입니다!');
-      return;
-    }
+    let decreaseIndex = 0;
+    let i = 0;
+    let newSigns = [];
+    let result = 0;
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
     const stringNumbers = number.split(/[+, \-, X, /]/);
-    for (let i = 0; i < stringNumbers.length; i++) {
+    for (i = 0; i < stringNumbers.length; i++) {
       //기호들을 기준으로 쪼갠후에 숫자뒤에 %가 붙어있다면 실수로 바꿔줍니다.
       if (stringNumbers[i].includes('%')) {
         percentNumber = stringNumbers[i].slice(0, -1);
@@ -75,6 +68,46 @@ class Calculator extends Component {
         result = result + numbers[i + 1];
       }
     }
+    return result;
+  };
+  //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 메서드
+  makeResult = async () => {
+    const { number, onNew } = this.props;
+
+    let openParenthesis = 0;
+    let closeParenthesis = 0;
+    let result = 0;
+    let numberInParenthesis = '';
+    let resultInParenthesis = 0;
+    let i = 0;
+    let j = 0;
+
+    //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
+    if (BASIC_MATH_SIGN.includes(number[number.length - 1])) {
+      alert('완성되지 않은 수식입니다!');
+      return;
+    }
+    // //괄호가 있다면 괄호들 먼저 쭉 계산합니다.
+    // while (1) {
+    //   for (i = 0; i < number.length; i++) {
+    //     if (number[i] === ')') {
+    //       closeParenthesis = i;
+    //       for (j = i; j >= 0; j--) {
+    //         if (number[j] === '(') {
+    //           openParenthesis = j;
+    //           break;
+    //         }
+    //       }
+    //       break;
+    //     }
+    //   }
+    //   for (let k = openParenthesis + 1; k <= closeParenthesis - 1; k++) {
+    //     numberInParenthesis += number[k];
+    //   }
+    //   resultInParenthesis = this.calculateBasicMathSigns(numberInParenthesis);
+    // }
+
+    result = this.calculateBasicMathSigns(number);
     const obj = { number: number, result: result.toString() };
     const fail = {
       result: '서버에 문제가 발생했습니다! 히스토리가 저장되지 않았습니다!',
@@ -90,7 +123,7 @@ class Calculator extends Component {
   };
 
   connectPost = (obj) => {
-    const URL = 'http://10.1.2.156:3000/post';
+    const URL = 'http://10.1.2.156:3000/history';
     const controller = new AbortController();
 
     // 2 second timeout:
