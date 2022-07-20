@@ -21,9 +21,11 @@ class Calculator extends Component {
     let i = 0;
     let newSigns = [];
     let result = 0;
+    let stringNumbers = [];
 
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
-    const stringNumbers = number.split(/[+, \-, X, /]/);
+    stringNumbers = number.split(/[+, \-, X, /]/);
+    console.log(stringNumbers);
     for (i = 0; i < stringNumbers.length; i++) {
       //기호들을 기준으로 쪼갠후에 숫자뒤에 %가 붙어있다면 실수로 바꿔줍니다.
       if (stringNumbers[i].includes('%')) {
@@ -35,9 +37,15 @@ class Calculator extends Component {
 
     for (i = 0; i < number.length; i++) {
       if (BASIC_MATH_SIGN.includes(number[i])) {
+        //기호 다음에 바로 마이너스가 나오는 경우
+        if (i + 1 < number.length && number[i + 1] === '-') {
+          signs.push(number[i] + '-');
+          continue;
+        }
         signs.push(number[i]);
       }
     }
+    console.log(signs);
 
     for (i = 0; i < signs.length; i++) {
       //나누기는 우선순위상 먼저 계산합니다.
@@ -52,6 +60,20 @@ class Calculator extends Component {
       else if (signs[i] === 'X') {
         intermediateResult =
           numbers[i - decreaseIndex] * numbers[i - decreaseIndex + 1];
+        numbers.splice(i - decreaseIndex, 2);
+        numbers.splice(i - decreaseIndex, 0, intermediateResult);
+        decreaseIndex++;
+        continue;
+      } else if (signs[i] === '/-') {
+        intermediateResult =
+          numbers[i - decreaseIndex] / -numbers[i - decreaseIndex + 1];
+        numbers.splice(i - decreaseIndex, 2);
+        numbers.splice(i - decreaseIndex, 0, intermediateResult);
+        decreaseIndex++;
+        continue;
+      } else if (signs[i] === 'X-') {
+        intermediateResult =
+          numbers[i - decreaseIndex] * -numbers[i - decreaseIndex + 1];
         numbers.splice(i - decreaseIndex, 2);
         numbers.splice(i - decreaseIndex, 0, intermediateResult);
         decreaseIndex++;
@@ -130,23 +152,7 @@ class Calculator extends Component {
         closeParenthesis - openParenthesis + 1,
         resultInParenthesis.toString()
       );
-      console.log(stringToArray);
-      //부호가 연속적으로 나오는지 체크해서 연속적으로 나오지 못하게 막습니다.
-      for (i = 0; i < stringToArray.length - 1; i++) {
-        if (
-          PLUS_MINUS.includes(stringToArray[i]) &&
-          stringToArray[i + 1] === /^\-/
-        ) {
-          stringToArray.splice(i + 1, 0, '0');
-        } else if (
-          MULTIPLICATION_DIVISION.includes(stringToArray[i]) &&
-          stringToArray[i + 1] === /^\-/
-        ) {
-          stringToArray.splice(i + 1, 0, '1');
-          console.log('hi');
-        }
-      }
-      console.log(stringToArray);
+
       number = stringToArray.toString();
       //쉼표를 없애줍니다.
       number = number.replace(/,/g, '');
