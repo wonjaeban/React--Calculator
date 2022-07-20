@@ -109,11 +109,8 @@ class Calculator extends Component {
 
     result = this.calculateBasicMathSigns(number);
     const obj = { number: number, result: result.toString() };
-    const fail = {
-      result: '서버에 문제가 발생했습니다! 히스토리가 저장되지 않았습니다!',
-    };
     let postResult = await this.connectPost(obj);
-    if (!postResult || postResult.result === fail.result) {
+    if (!postResult) {
       alert('서버가 응답하지 않습니다!');
     }
 
@@ -140,7 +137,7 @@ class Calculator extends Component {
       .then((response) => {
         if (!response.ok) {
           // 응답이 제대로 오지 않을 때(URL오류나 request 오류시에)
-          throw Error('could not fetch the data that resource');
+          throw Error(`Error! status: ${response.status} server error`);
         }
         return response.json();
       })

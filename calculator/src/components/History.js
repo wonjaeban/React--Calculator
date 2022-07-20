@@ -36,7 +36,7 @@ class History extends Component {
         //ok 프로퍼티가 있음
         if (!response.ok) {
           // 응답이 제대로 오지 않을 때
-          throw Error('could not fetch the data that resource');
+          throw Error(`Error! status: ${response.status} server error`);
         }
         return response.json();
       })
@@ -49,23 +49,21 @@ class History extends Component {
 
   callHistory = async () => {
     let allHistory = await this.connectGet();
-    const fail = {
-      result: '서버에 문제가 발생했습니다! 히스토리를 불러오지 못했습니다!',
-    };
 
-    if (!allHistory || allHistory.result === fail.result) {
+    if (!allHistory) {
       alert('서버가 응답하지 않습니다!');
     } else if (allHistory.length === 0) {
       alert('히스토리가 존재하지 않습니다!');
     }
-    // console.log(allHistory);
     this.setAllHistory(allHistory);
   };
 
   render() {
     const { modalVisible, allHistory } = this.state;
-
-    let historys = allHistory.slice(0, 10);
+    let historys = [];
+    if (allHistory) {
+      historys = allHistory.slice(0, 10);
+    }
 
     return (
       <View>

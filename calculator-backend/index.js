@@ -16,6 +16,7 @@ app.post("/history", (req, res) => {
     if (err) {
         //쿼리에 문제가 있을 시에
       console.log("query error :", err);
+      res.status(500);
       res.send(fail);
     } else {
       console.log("insert 완료");
@@ -25,12 +26,13 @@ app.post("/history", (req, res) => {
 });
 
 app.get("/historys", (req, res) => {
-  const fail = {result: "서버에 문제가 발생했습니다! 히스토리를 불러오지 못했습니다!"};
   let q = "SELECT * FROM calculator ORDER BY T_IDX DESC";
+  const fail = {result: "서버에 문제가 발생했습니다!"};
   let request = new sql.Request();
   request.query(q, (err, rows) => {
     if (err) {
         console.log(`query error: ${err}`);
+        res.status(500);
         res.send(fail);
       return;
     } console.log("get 완료!");
