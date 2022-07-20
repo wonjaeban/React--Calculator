@@ -79,6 +79,7 @@ class Calculator extends Component {
     }
     countParenthesis = 0;
     let { number, onNew } = this.props;
+    const obj = { number: number, result: '' };
 
     let result = 0;
 
@@ -132,7 +133,7 @@ class Calculator extends Component {
     }
 
     result = this.calculateBasicMathSigns(number);
-    const obj = { number: number, result: result.toString() };
+    obj.result = result.toString();
     let postResult = await this.connectPost(obj);
     if (!postResult) {
       alert('서버가 응답하지 않습니다!');
