@@ -9,27 +9,22 @@ const BASIC_MATH_SIGN = ['/', 'X', '-', '+'];
 const NATURAL_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const ALL_MATH_SIGN = ['.', '(', ')', '%', '/', 'X', '-', '+'];
 const PLUS_MINUS = ['-', '+'];
+const MULTIPLICATION_DIVISION = ['X', '/'];
 
 class Calculator extends Component {
-  //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 함수
-  makeResult = () => {
-    const { number, onNew } = this.props;
-    let signs = [];
-    let newSigns = [];
-    let i = 0;
-    let decreaseIndex = 0;
-    let result = 0;
+  //+, -, *, / 계산하는 메서드입니다.
+  calculateBasicMathSigns = (number) => {
     let percentNumber = '';
+    let signs = [];
     let intermediateResult = [];
+    let decreaseIndex = 0;
+    let i = 0;
+    let newSigns = [];
+    let result = 0;
 
-    //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
-    if (BASIC_MATH_SIGN.includes(number[number.length - 1])) {
-      alert('완성되지 않은 수식입니다!');
-      return;
-    }
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
     const stringNumbers = number.split(/[+, \-, X, /]/);
-    for (let i = 0; i < stringNumbers.length; i++) {
+    for (i = 0; i < stringNumbers.length; i++) {
       //기호들을 기준으로 쪼갠후에 숫자뒤에 %가 붙어있다면 실수로 바꿔줍니다.
       if (stringNumbers[i].includes('%')) {
         percentNumber = stringNumbers[i].slice(0, -1);
@@ -75,21 +70,123 @@ class Calculator extends Component {
         result = result + numbers[i + 1];
       }
     }
-    const obj = { number: number, result: result.toString() };
-    this.connectPost(obj);
+    return result;
+  };
+
+  //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 메서드
+  makeResult = async () => {
+    if (countParenthesis > 0) {
+      alert('괄호가 맞지 않습니다!');
+      return;
+    }
+    countParenthesis = 0;
+    let { number, onNew } = this.props;
+    const obj = { number: number, result: '' };
+
+    let result = 0;
+
+    let i = 0;
+    let j = 0;
+
+    //현재 화면에 나온 문자들의 마지막이 기호로 끝난다면
+    if (BASIC_MATH_SIGN.includes(number[number.length - 1])) {
+      alert('완성되지 않은 수식입니다!');
+      return;
+    }
+    //괄호가 있다면 괄호들 먼저 쭉 계산합니다.
+    while (1) {
+      let count = 0;
+      let openParenthesis = 0;
+      let closeParenthesis = 0;
+      let numberInParenthesis = '';
+      let resultInParenthesis = 0;
+      for (i = 0; i < number.length; i++) {
+        //가장 안쪽 괄호부터 찾습니다.
+        if (number[i] === ')') {
+          closeParenthesis = i;
+          count++;
+          for (j = i; j >= 0; j--) {
+            if (number[j] === '(') {
+              openParenthesis = j;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      //괄호를 못찾았으면 반복문 끝냅니다.
+      if (count === 0) {
+        break;
+      }
+      //괄호안 문자열을 잘라냅니다.
+      numberInParenthesis = number.slice(openParenthesis + 1, closeParenthesis);
+      //괄호안 문자열들을 계산합니다.
+      resultInParenthesis = this.calculateBasicMathSigns(numberInParenthesis);
+
+      //문자열을 array로 바꿔서 splice를 적용합니다.
+      let stringToArray = number.split('');
+      stringToArray.splice(
+        openParenthesis,
+        closeParenthesis - openParenthesis + 1,
+        resultInParenthesis.toString()
+      );
+      console.log(stringToArray);
+      //부호가 연속적으로 나오는지 체크해서 연속적으로 나오지 못하게 막습니다.
+      for (i = 0; i < stringToArray.length - 1; i++) {
+        if (
+          PLUS_MINUS.includes(stringToArray[i]) &&
+          stringToArray[i + 1] === /^\-/
+        ) {
+          stringToArray.splice(i + 1, 0, '0');
+        } else if (
+          MULTIPLICATION_DIVISION.includes(stringToArray[i]) &&
+          stringToArray[i + 1] === /^\-/
+        ) {
+          stringToArray.splice(i + 1, 0, '1');
+          console.log('hi');
+        }
+      }
+      console.log(stringToArray);
+      number = stringToArray.toString();
+      //쉼표를 없애줍니다.
+      number = number.replace(/,/g, '');
+    }
+
+    result = this.calculateBasicMathSigns(number);
+    obj.result = result.toString();
+    let postResult = await this.connectPost(obj);
+    if (!postResult) {
+      alert('서버가 응답하지 않습니다!');
+    }
     onNew(result.toString());
   };
 
   connectPost = (obj) => {
-    // const URL = 'http://10.1.2.156:3000/post';
-    const URL = 'http://172.20.10.4:3000/post';
-    fetch(URL, {
+    const URL = 'http://10.1.2.156:3000/history';
+    const controller = new AbortController();
+
+    // 2 second timeout:
+    setTimeout(() => controller.abort(), 2000);
+
+    let result = fetch(URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
       },
       body: JSON.stringify(obj),
-    });
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // 응답이 제대로 오지 않을 때(URL오류나 request 오류시에)
+          throw Error(`Error! status: ${response.status} server error`);
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return result;
   };
 
   //이전에 .이 찍혔는지 확인하는 메서드
@@ -141,8 +238,8 @@ class Calculator extends Component {
       return;
     }
     while (1) {
-      //기호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
-      if (i === 0 || BASIC_MATH_SIGN.includes(number[i])) {
+      //기호를 만나거나 열린 괄호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
+      if (i === 0 || BASIC_MATH_SIGN.includes(number[i]) || number[i] === '(') {
         break;
       } //.을 만나면 소수다.
       else if (number[i] === '.') {
@@ -207,7 +304,6 @@ class Calculator extends Component {
       newSentence = number.substring(0, length - 1);
       newSentence += val;
       onNew(newSentence);
-
       return;
     } else if (number[length - 1] === '(' && !PLUS_MINUS.includes(val)) {
       return;
@@ -251,6 +347,8 @@ class Calculator extends Component {
     }
 
     onPlus('(');
+    countParenthesis++;
+    return;
   };
 
   //AC눌렀을 때 실행되는 메서드

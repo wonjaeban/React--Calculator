@@ -18,35 +18,51 @@ class History extends Component {
   }
 
   setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible, allHistory: this.state.allHistory });
+    this.setState({ modalVisible: visible });
   };
 
   setAllHistory = (data) => {
-    this.setState({ modalVisible: this.state.modalVisible, allHistory: data });
+    this.setState({ allHistory: data });
   };
 
   connectGet = () => {
-    // const URL = 'http://10.1.2.156:3000/get';
-    const URL = 'http://172.20.10.4:3000/get';
-    let historyDatas = fetch(URL).then((response) => response.json());
+    const URL = 'http://10.1.2.156:3000/historys';
+    const controller = new AbortController();
+
+    // 2 second timeout:
+    setTimeout(() => controller.abort(), 2000);
+    let historyDatas = fetch(URL, { signal: controller.signal })
+      .then((response) => {
+        //ok 프로퍼티가 있음
+        if (!response.ok) {
+          // 응답이 제대로 오지 않을 때
+          throw Error(`Error! status: ${response.status} server error`);
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     return historyDatas;
   };
 
   callHistory = async () => {
     let allHistory = await this.connectGet();
+
+    if (!allHistory) {
+      alert('서버가 응답하지 않습니다!');
+    } else if (allHistory.length === 0) {
+      alert('히스토리가 존재하지 않습니다!');
+    }
     this.setAllHistory(allHistory);
   };
 
   render() {
     const { modalVisible, allHistory } = this.state;
     let historys = [];
-    let count = 0;
-    let i = allHistory.length - 1;
-    while (i >= 0 && count <= 15) {
-      historys.push(allHistory[i]);
-      i--;
-      count++;
+    if (allHistory) {
+      historys = allHistory.slice(0, 10);
     }
 
     return (
@@ -62,8 +78,8 @@ class History extends Component {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {historys.map((history) => (
-                <Texts style={styles.modalText} history={history} />
+              {historys.map((history, index) => (
+                <Texts style={styles.modalText} history={history} key={index} />
               ))}
 
               <Pressable
