@@ -9,6 +9,7 @@ const BASIC_MATH_SIGN = ['/', 'X', '-', '+'];
 const NATURAL_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const ALL_MATH_SIGN = ['.', '(', ')', '%', '/', 'X', '-', '+'];
 const PLUS_MINUS = ['-', '+'];
+const MULTIPLICATION_DIVISION = ['X', '/'];
 
 class Calculator extends Component {
   //+, -, *, / 계산하는 메서드입니다.
@@ -20,6 +21,7 @@ class Calculator extends Component {
     let i = 0;
     let newSigns = [];
     let result = 0;
+
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
     const stringNumbers = number.split(/[+, \-, X, /]/);
     for (i = 0; i < stringNumbers.length; i++) {
@@ -120,6 +122,7 @@ class Calculator extends Component {
       numberInParenthesis = number.slice(openParenthesis + 1, closeParenthesis);
       //괄호안 문자열들을 계산합니다.
       resultInParenthesis = this.calculateBasicMathSigns(numberInParenthesis);
+
       //문자열을 array로 바꿔서 splice를 적용합니다.
       let stringToArray = number.split('');
       stringToArray.splice(
@@ -127,6 +130,23 @@ class Calculator extends Component {
         closeParenthesis - openParenthesis + 1,
         resultInParenthesis.toString()
       );
+      console.log(stringToArray);
+      //부호가 연속적으로 나오는지 체크해서 연속적으로 나오지 못하게 막습니다.
+      for (i = 0; i < stringToArray.length - 1; i++) {
+        if (
+          PLUS_MINUS.includes(stringToArray[i]) &&
+          stringToArray[i + 1] === /^\-/
+        ) {
+          stringToArray.splice(i + 1, 0, '0');
+        } else if (
+          MULTIPLICATION_DIVISION.includes(stringToArray[i]) &&
+          stringToArray[i + 1] === /^\-/
+        ) {
+          stringToArray.splice(i + 1, 0, '1');
+          console.log('hi');
+        }
+      }
+      console.log(stringToArray);
       number = stringToArray.toString();
       //쉼표를 없애줍니다.
       number = number.replace(/,/g, '');
