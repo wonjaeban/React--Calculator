@@ -70,15 +70,18 @@ class Calculator extends Component {
     }
     return result;
   };
+
   //최종적으로 화면에 있는 문자 및 숫자들을 계산하는 메서드
   makeResult = async () => {
-    const { number, onNew } = this.props;
+    if (countParenthesis > 0) {
+      alert('괄호가 맞지 않습니다!');
+      return;
+    }
+    countParenthesis = 0;
+    let { number, onNew } = this.props;
 
-    let openParenthesis = 0;
-    let closeParenthesis = 0;
     let result = 0;
-    let numberInParenthesis = '';
-    let resultInParenthesis = 0;
+
     let i = 0;
     let j = 0;
 
@@ -87,25 +90,46 @@ class Calculator extends Component {
       alert('완성되지 않은 수식입니다!');
       return;
     }
-    // //괄호가 있다면 괄호들 먼저 쭉 계산합니다.
-    // while (1) {
-    //   for (i = 0; i < number.length; i++) {
-    //     if (number[i] === ')') {
-    //       closeParenthesis = i;
-    //       for (j = i; j >= 0; j--) {
-    //         if (number[j] === '(') {
-    //           openParenthesis = j;
-    //           break;
-    //         }
-    //       }
-    //       break;
-    //     }
-    //   }
-    //   for (let k = openParenthesis + 1; k <= closeParenthesis - 1; k++) {
-    //     numberInParenthesis += number[k];
-    //   }
-    //   resultInParenthesis = this.calculateBasicMathSigns(numberInParenthesis);
-    // }
+    //괄호가 있다면 괄호들 먼저 쭉 계산합니다.
+    while (1) {
+      let count = 0;
+      let openParenthesis = 0;
+      let closeParenthesis = 0;
+      let numberInParenthesis = '';
+      let resultInParenthesis = 0;
+      for (i = 0; i < number.length; i++) {
+        //가장 안쪽 괄호부터 찾습니다.
+        if (number[i] === ')') {
+          closeParenthesis = i;
+          count++;
+          for (j = i; j >= 0; j--) {
+            if (number[j] === '(') {
+              openParenthesis = j;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      //괄호를 못찾았으면 반복문 끝냅니다.
+      if (count === 0) {
+        break;
+      }
+      //괄호안 문자열을 잘라냅니다.
+      numberInParenthesis = number.slice(openParenthesis + 1, closeParenthesis);
+      //괄호안 문자열들을 계산합니다.
+      resultInParenthesis = this.calculateBasicMathSigns(numberInParenthesis);
+      //문자열을 array로 바꿔서 splice를 적용합니다.
+      let stringToArray = number.split('');
+      stringToArray.splice(
+        openParenthesis,
+        closeParenthesis - openParenthesis + 1,
+        resultInParenthesis.toString()
+      );
+      number = stringToArray.toString();
+      //쉼표를 없애줍니다.
+      number = number.replace(/,/g, '');
+    }
 
     result = this.calculateBasicMathSigns(number);
     const obj = { number: number, result: result.toString() };
@@ -113,9 +137,6 @@ class Calculator extends Component {
     if (!postResult) {
       alert('서버가 응답하지 않습니다!');
     }
-
-    console.log(postResult);
-
     onNew(result.toString());
   };
 
@@ -196,8 +217,8 @@ class Calculator extends Component {
       return;
     }
     while (1) {
-      //기호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
-      if (i === 0 || BASIC_MATH_SIGN.includes(number[i])) {
+      //기호를 만나거나 열린 괄호를 만나거나 인덱스를 벗어나면 반복문을 끝낸다.
+      if (i === 0 || BASIC_MATH_SIGN.includes(number[i]) || number[i] === '(') {
         break;
       } //.을 만나면 소수다.
       else if (number[i] === '.') {
@@ -305,6 +326,8 @@ class Calculator extends Component {
     }
 
     onPlus('(');
+    countParenthesis++;
+    return;
   };
 
   //AC눌렀을 때 실행되는 메서드
