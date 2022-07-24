@@ -9,7 +9,6 @@ const BASIC_MATH_SIGN = ['/', 'X', '-', '+'];
 const NATURAL_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const ALL_MATH_SIGN = ['.', '(', ')', '%', '/', 'X', '-', '+'];
 const PLUS_MINUS = ['-', '+'];
-const MULTIPLICATION_DIVISION = ['X', '/'];
 
 class Calculator extends Component {
   //+, -, *, / 계산하는 메서드입니다.
@@ -22,10 +21,40 @@ class Calculator extends Component {
     let newSigns = [];
     let result = 0;
     let stringNumbers = [];
+    let newNumbers = '';
+    let positionOfMinus = [];
+    let count = 0;
+
+    //제일 처음 숫자가 마이너스로 시작하는 경우
+    if (number[0] === '-') {
+      positionOfMinus.push(count);
+      //기호 다음에 바로 -가 오는 경우를 처리해야함. 마이너스 위치를 기억하고 -를 제외합니다.
+      for (i = 1; i < number.length; i++) {
+        newNumbers += number[i];
+        if (BASIC_MATH_SIGN.includes(number[i])) {
+          count += 1;
+          if (i < number.length && number[i + 1] === '-') {
+            positionOfMinus.push(count);
+            i++;
+          }
+        }
+      }
+    } else {
+      //기호 다음에 바로 -가 오는 경우를 처리해야함. 마이너스 위치를 기억하고 -를 제외합니다.
+      for (i = 0; i < number.length; i++) {
+        newNumbers += number[i];
+        if (BASIC_MATH_SIGN.includes(number[i])) {
+          count += 1;
+          if (i < number.length && number[i + 1] === '-') {
+            positionOfMinus.push(count);
+            i++;
+          }
+        }
+      }
+    }
 
     //화면의 숫자들을 기호들을 기준으로 쪼갭니다.
-    stringNumbers = number.split(/[+, \-, X, /]/);
-    console.log(stringNumbers);
+    stringNumbers = newNumbers.split(/[+, \-, X, /]/);
     for (i = 0; i < stringNumbers.length; i++) {
       //기호들을 기준으로 쪼갠후에 숫자뒤에 %가 붙어있다면 실수로 바꿔줍니다.
       if (stringNumbers[i].includes('%')) {
@@ -33,19 +62,16 @@ class Calculator extends Component {
         stringNumbers.splice(i, 1, Number(percentNumber) / 100);
       }
     }
-    const numbers = stringNumbers.map((each) => Number(each));
+    let numbers = stringNumbers.map((each) => Number(each));
+    for (i = 0; i < positionOfMinus.length; i++) {
+      numbers[positionOfMinus[i]] *= -1;
+    }
 
-    for (i = 0; i < number.length; i++) {
-      if (BASIC_MATH_SIGN.includes(number[i])) {
-        //기호 다음에 바로 마이너스가 나오는 경우
-        if (i + 1 < number.length && number[i + 1] === '-') {
-          signs.push(number[i] + '-');
-          continue;
-        }
-        signs.push(number[i]);
+    for (i = 0; i < newNumbers.length; i++) {
+      if (BASIC_MATH_SIGN.includes(newNumbers[i])) {
+        signs.push(newNumbers[i]);
       }
     }
-    console.log(signs);
 
     for (i = 0; i < signs.length; i++) {
       //나누기는 우선순위상 먼저 계산합니다.
@@ -60,20 +86,6 @@ class Calculator extends Component {
       else if (signs[i] === 'X') {
         intermediateResult =
           numbers[i - decreaseIndex] * numbers[i - decreaseIndex + 1];
-        numbers.splice(i - decreaseIndex, 2);
-        numbers.splice(i - decreaseIndex, 0, intermediateResult);
-        decreaseIndex++;
-        continue;
-      } else if (signs[i] === '/-') {
-        intermediateResult =
-          numbers[i - decreaseIndex] / -numbers[i - decreaseIndex + 1];
-        numbers.splice(i - decreaseIndex, 2);
-        numbers.splice(i - decreaseIndex, 0, intermediateResult);
-        decreaseIndex++;
-        continue;
-      } else if (signs[i] === 'X-') {
-        intermediateResult =
-          numbers[i - decreaseIndex] * -numbers[i - decreaseIndex + 1];
         numbers.splice(i - decreaseIndex, 2);
         numbers.splice(i - decreaseIndex, 0, intermediateResult);
         decreaseIndex++;
@@ -168,7 +180,7 @@ class Calculator extends Component {
   };
 
   connectPost = (obj) => {
-    const URL = 'http://10.1.2.156:3000/history';
+    const URL = 'http://192.168.219.191:3000/history';
     const controller = new AbortController();
 
     // 2 second timeout:

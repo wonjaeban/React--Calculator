@@ -26,7 +26,7 @@ class History extends Component {
   };
 
   connectGet = () => {
-    const URL = 'http://10.1.2.156:3000/historys';
+    const URL = 'http://192.168.219.191:3000/historys';
     const controller = new AbortController();
 
     // 2 second timeout:
