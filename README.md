@@ -70,12 +70,13 @@
 <br>
 <br />  
 
-##  what i used in calculator  
+##  Libraries used in calculator  
 
 - ReactNative
 - NodeJS
 - Express
 - MSSQL
+- Expo
 
 
 <br />
