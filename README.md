@@ -35,7 +35,6 @@
   You can use History. HS shows the history you calculated in the past.
 
 
-<details markdown="1">
 <img src="https://user-images.githubusercontent.com/70055619/180787959-2343ef1c-b74f-414f-902d-280f2364a7ee.jpg">
 > This is Calculator's first screen I've put up as an expo.  
 <img src="https://user-images.githubusercontent.com/70055619/180788586-7dbe0dd0-2224-4aaa-8998-27e92d77b8c5.jpg">
@@ -55,14 +54,6 @@
 > The modal shows you only the latest 10 histories.  
 
 
-
-
-
-
-
-
-
-</details>
 
 <br />
 
