@@ -4,11 +4,11 @@
 
 ## 💭 About
 
-> This is Calculator and Counter using ReactNative and Expo
-> There are four directories.
-> 'calculator-backend' is directory for calculator's backend
-> 'calculator' is directory for calculator's frontend
-> 'counter(classComponent)' is directory for counter of class component structure
+> This is Calculator and Counter using ReactNative and Expo  
+> There are four directories.  
+> 'calculator-backend' is directory for calculator's backend  
+> 'calculator' is directory for calculator's frontend  
+> 'counter(classComponent)' is directory for counter of class component structure  
 > 'counter' is directory for counter of function component structure
 
 <br />
@@ -36,11 +36,31 @@
 
 
 <details markdown="1">
-<summary>페이지 뷰 자세히 보기</summary>
+<img src="https://user-images.githubusercontent.com/70055619/180787959-2343ef1c-b74f-414f-902d-280f2364a7ee.jpg">
+> This is Calculator's first screen I've put up as an expo.  
+<img src="https://user-images.githubusercontent.com/70055619/180788586-7dbe0dd0-2224-4aaa-8998-27e92d77b8c5.jpg">
+> You can type basic math signs.  
+<img src="https://user-images.githubusercontent.com/70055619/180788891-95df3248-e7f3-4816-8688-89c3aa9ab79d.jpg">
+> Press = to calculate. It is the result of the above screen.  
+<img src="https://user-images.githubusercontent.com/70055619/180790524-92133dfa-e9af-4457-856d-3d62874bae6f.jpg">
+> You can make actual numbers.  
+<img src="https://user-images.githubusercontent.com/70055619/180790843-2aae76c1-3c76-402f-802d-3815c0d20fe0.jpg">
+> It is the result of the above screen.  
+<img src="https://user-images.githubusercontent.com/70055619/180793878-c211cade-a82a-4b8d-bf3b-0418f617ec1e.jpg">
+> You can type percent and parenthesis.  
+<img src="https://user-images.githubusercontent.com/70055619/180794076-3ff81a7e-5c87-4e56-b4cd-273fabc0e014.jpg">
+> It is the result of the above screen.  
+<img src="https://user-images.githubusercontent.com/70055619/180796205-908c1478-9a55-4ae4-8b3f-decc264cf5c9.jpg">
+> You can see the historys of your calculation results when you press HS.  
+> The modal shows you only the latest 10 histories.  
 
-<img src="https://user-images.githubusercontent.com/97428216/162159291-3cb321a6-779a-4f54-85a4-6de81f646c3e.png">
-<img src="https://user-images.githubusercontent.com/97428216/161257554-418ab409-26e7-425b-99bc-5c0378e1f446.png">
-<img src="https://user-images.githubusercontent.com/97428216/161258629-04d6bc89-1e13-4050-87ae-d5968f520cad.png">
+
+
+
+
+
+
+
 
 </details>
 
