@@ -180,7 +180,7 @@ class Calculator extends Component {
   };
 
   connectPost = (obj) => {
-    const URL = 'http://192.168.219.191:3000/history';
+    const URL = 'http://your ip:3000/history';
     const controller = new AbortController();
 
     // 2 second timeout:

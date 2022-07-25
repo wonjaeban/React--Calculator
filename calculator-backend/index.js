@@ -49,8 +49,7 @@ app.listen(port);
 // mssql 연동
 const sql = require("mssql");
 let config = {
-  // server: "WONJAE0709",
-  server: "LAPTOP-SP6G768M",
+  server: "your server name",
   port: 1433,
   user: "test",
   password: "test",
